@@ -8,12 +8,7 @@ import java.util.List;
 public class DFS implements PuzzleSolver{
 
     @Override
-    public void setInitialState(State state) {
-        //todo: implementation
-    }
-
-    @Override
-    public boolean solve() {
+    public boolean solve(State initialState) {
         //todo: implementation
         return false;
     }

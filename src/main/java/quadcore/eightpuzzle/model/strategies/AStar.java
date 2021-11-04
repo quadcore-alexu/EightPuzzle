@@ -6,19 +6,14 @@ import quadcore.eightpuzzle.model.datastructures.TreeNode;
 import java.util.List;
 import java.util.function.Function;
 
-public class AStar implements PuzzleSolver{
+public class AStar implements PuzzleSolver {
 
-    public AStar() {
+    public AStar(Function<State, Integer> heuristic) {
         //todo: implementation & pass the heuristic function in the constructor
     }
 
     @Override
-    public void setInitialState(State state) {
-        //todo: implementation
-    }
-
-    @Override
-    public boolean solve() {
+    public boolean solve(State initialState) {
         //todo: implementation
         return false;
     }

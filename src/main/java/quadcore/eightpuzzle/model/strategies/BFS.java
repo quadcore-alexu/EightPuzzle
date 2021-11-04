@@ -5,14 +5,10 @@ import quadcore.eightpuzzle.model.datastructures.TreeNode;
 
 import java.util.List;
 
-public class BFS implements PuzzleSolver{
-    @Override
-    public void setInitialState(State state) {
-        //todo: implementation
-    }
+public class BFS implements PuzzleSolver {
 
     @Override
-    public boolean solve() {
+    public boolean solve(State initialState) {
         //todo: implementation
         return false;
     }

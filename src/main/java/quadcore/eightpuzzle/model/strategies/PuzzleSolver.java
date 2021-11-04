@@ -7,9 +7,7 @@ import java.util.List;
 
 public interface PuzzleSolver {
 
-    void setInitialState(State state);
-
-    boolean solve();
+    boolean solve(State initialState);
 
     List<State> getSolution();
 
