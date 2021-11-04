@@ -1,5 +1,6 @@
 package quadcore.eightpuzzle.model;
 
+import quadcore.eightpuzzle.model.strategies.BFS;
 import quadcore.eightpuzzle.model.strategies.PuzzleSolver;
 
 public class PuzzleSolverFactory {
@@ -9,6 +10,6 @@ public class PuzzleSolverFactory {
 
     public static PuzzleSolver createPuzzleSolver(String type) throws UnsupportedOperationException {
         //todo: implementation
-        return null;
+        return new BFS();
     }
 }
