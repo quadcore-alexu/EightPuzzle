@@ -32,6 +32,10 @@ public class TreeNode<T> {
         return depth;
     }
 
+    public TreeNode<T> getParent() {
+        return parent;
+    }
+
     private void increaseDepth(int depth) {
         if (this.depth < depth) {
             this.depth = depth;

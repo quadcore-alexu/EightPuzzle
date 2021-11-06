@@ -15,6 +15,7 @@ public class Game {
      * For example: "BFS" or "DFS".
      * The string is case-insensitive and is checked using the {@code `String.contains()`} method.
      * That is, both "A star with manhattan" and "manhattan A*" will use the same strategy.<br/>
+     *
      * @param strategy the strategy to be used in solving the game.
      */
     public void setPuzzleSolver(String strategy) {
@@ -23,6 +24,7 @@ public class Game {
 
     /**
      * Starts solving the game.
+     *
      * @return True if a solution is found. False otherwise.
      */
     public boolean solve(String initialState) {
@@ -35,6 +37,7 @@ public class Game {
      * Gets the solution as a list of states, where each state can be reached directly from the previous one.
      * The first is the initial state, and the last is the goal state.
      * This should be called after {@code `solve()`}.
+     *
      * @return the solution as a list of states.
      * @throws NullPointerException if {@code `solve()`} method was not called or did not terminate successfully.
      */
@@ -44,6 +47,7 @@ public class Game {
 
     /**
      * Gets the search tree used by the pre-specified strategy.
+     *
      * @return the root of the tree as a tree node.
      * This should be called after {@code `solve()`}.
      * @throws NullPointerException if {@code `solve()`} method was not called or did not terminate successfully.
