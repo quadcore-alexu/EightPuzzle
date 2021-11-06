@@ -17,6 +17,7 @@ public class DFS implements PuzzleSolver {
         Map<State, TreeNode<State>> parents = new HashMap<>();
 
         searchTree = new TreeNode<>(initialState);
+        explored.add(initialState);
         parents.put(initialState, searchTree);
         if (initialState.isGoal()) {
             solution = getSolFromTree(searchTree);

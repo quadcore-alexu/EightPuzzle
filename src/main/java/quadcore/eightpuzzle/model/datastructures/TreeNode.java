@@ -39,7 +39,7 @@ public class TreeNode<T> {
     private void increaseDepth(int depth) {
         if (this.depth < depth) {
             this.depth = depth;
-            parent.increaseDepth(depth + 1);
+            if (parent != null) parent.increaseDepth(depth + 1);
         }
     }
 
