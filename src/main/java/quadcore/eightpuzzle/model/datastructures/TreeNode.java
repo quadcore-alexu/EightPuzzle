@@ -6,6 +6,7 @@ import java.util.List;
 public class TreeNode<T> {
 
     private final T value;
+    private TreeNode<T> parent;
     private final List<TreeNode<T>> children = new ArrayList<>();
 
     public TreeNode(T value) {
@@ -20,8 +21,15 @@ public class TreeNode<T> {
         return children;
     }
 
-    public void addChild(T value) {
-        children.add(new TreeNode<>(value));
+    public void addChild(TreeNode<T> child) {
+        if (child == null) throw new NullPointerException("Cannot add null child to TreeNode");
+        child.parent = this;
+        children.add(child);
     }
+
+    public TreeNode<T> getParent() {
+        return parent;
+    }
+
 
 }
