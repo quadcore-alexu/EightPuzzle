@@ -1,11 +1,17 @@
 package quadcore.eightpuzzle.view;
 
+import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -16,17 +22,51 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class EightPuzzleController implements Initializable {
     private StatesManipulator statesManipulator;
     private TranslateTransition trans;
     private TranslateTransition backTrans;
+    private String strategy;
+    private String heuristic;
+    private String initialState="";
     private boolean lock;
+    private Map<String,String> initialBoard;
 
     @FXML
     private Pane boardPane;
+    @FXML
+    private GridPane gridPane;
+    @FXML
+    private Label errorLabel;
+    @FXML
+    private Button solve;
+
+    @FXML
+    private ComboBox strategies;
+    @FXML
+    private ComboBox heuristics;
+    @FXML
+    private TextField tileOne;
+    @FXML
+    private TextField tileTwo;
+    @FXML
+    private TextField tileThree;
+    @FXML
+    private TextField tileFour;
+    @FXML
+    private TextField tileFive;
+    @FXML
+    private TextField tileSix;
+    @FXML
+    private TextField tileSeven;
+    @FXML
+    private TextField tileEight;
+    @FXML
+    private TextField tileNine;
+    public EightPuzzleController() {
+    }
 
     @FXML
     protected void nextButtonClicked() {
@@ -40,6 +80,35 @@ public class EightPuzzleController implements Initializable {
     }
 
     @FXML
+    protected void setInitialState(Event event)
+    {
+        TextField tile = (TextField) event.getSource();
+        initialBoard.put(tile.getId(),tile.getText());
+        System.out.printf((String) initialBoard.get(tile.getId()));
+    }
+
+    @FXML
+    protected void onStrategySelected()
+    {
+      strategy = (String) strategies.getValue();
+      if (strategy.equals("A*"))
+          heuristics.setVisible(true);
+      else
+          heuristics.setVisible(false);
+      System.out.printf("Strategy");
+    }
+
+    @FXML
+    protected void onHeuristicSelected()
+    {
+        heuristic = (String) heuristics.getValue();
+;
+        System.out.printf(heuristic);
+    }
+
+
+
+    @FXML
     protected void backButtonClicked() {
         if (lock) return;
         lock = true;
@@ -49,6 +118,7 @@ public class EightPuzzleController implements Initializable {
             moveTile(move[0], move[1], move[2]);
         } else
             lock = false;
+
     }
 
     @FXML
@@ -73,6 +143,14 @@ public class EightPuzzleController implements Initializable {
         //TODO: replace the passed array of strings with path solution array
         statesManipulator = new StatesManipulator(new String[] { "125340678", "120345678", "102345678", "012345678" });
         boardPane.getChildren().add(createBoard("125340678"));
+        strategies.getItems().clear();
+        strategies.getItems().addAll("BFS","DFS","A*");
+        heuristics.getItems().clear();
+        heuristics.getItems().addAll("Manhattan distance","Euclidean distance");
+        heuristics.setVisible(false);
+        initialBoard = new HashMap<String,String>();
+        errorLabel.setVisible(false);
+
     }
 
     /**
@@ -125,6 +203,8 @@ public class EightPuzzleController implements Initializable {
         trans.play();
     }
 
+
+
     /**
      * Commits the board new state
      * It assign the moving tile to its new position
@@ -170,4 +250,61 @@ public class EightPuzzleController implements Initializable {
                 r.setFill(color);
         }
     }
+
+    private boolean isValidTileValue(String value)
+    {
+        if(value.length()>1) return false;
+        if(Character.isDigit(value.charAt(0)))
+        {
+            return Integer.parseInt(value)<9 ? true:false;
+        }
+        return false;
+    }
+
+    private boolean isDuplicateValue(String value)
+    {
+        return initialState.contains(value);
+    }
+
+    @FXML
+    private boolean isValidInitialState()
+    {
+
+        if (initialBoard.size()<9) issueError();
+        for (Map.Entry<String,String> entry : initialBoard.entrySet())
+        {
+
+              if (isValidTileValue(entry.getValue()) && !isDuplicateValue(entry.getValue()))
+              {
+                  initialState += entry.getValue();
+              }
+              else {
+                  issueError();
+                  resetInitialState();
+                  return false;
+
+              }
+        }
+        return true;
+    }
+
+    private void resetInitialState()
+    {
+        initialState="";
+        initialBoard = new HashMap<>();
+
+    }
+    private void issueError()
+    {
+        errorLabel.setText("INVALID STATE!");
+        errorLabel.setVisible(true);
+        PauseTransition visiblePause = new PauseTransition(
+                Duration.seconds(3)
+        );
+        visiblePause.setOnFinished(
+                event -> errorLabel.setVisible(false)
+        );
+        visiblePause.play();
+    }
+
 }
