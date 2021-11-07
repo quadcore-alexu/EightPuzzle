@@ -23,6 +23,7 @@ public class TreeNode<T> {
     }
 
     public void addChild(TreeNode<T> child) {
+        if (child == null) throw new NullPointerException("Cannot add null child to TreeNode");
         child.parent = this;
         increaseDepth(1);
         children.add(child);

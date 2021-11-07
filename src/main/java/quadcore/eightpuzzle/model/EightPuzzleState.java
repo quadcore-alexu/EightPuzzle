@@ -1,19 +1,14 @@
 package quadcore.eightpuzzle.model;
 
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.*;
 
 public class EightPuzzleState implements State {
-
-    private class Point {
-        final int x;
-        final int y;
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
 
 //    private final BitSet bitSet = new BitSet(36);
     private final String state;
@@ -69,7 +64,8 @@ public class EightPuzzleState implements State {
         //return Arrays.hashCode(bitSet.toLongArray());
     }
 
-    private State getNextState(Point p1, Point p2) {
+    @Contract("_, _ -> new")
+    private @NotNull State getNextState(@NotNull Point p1, @NotNull Point p2) {
         StringBuilder stringBuilder = new StringBuilder(getAsString());
         int firstIndex = 3 * p1.y + p1.x;
         char first = stringBuilder.charAt(firstIndex);
