@@ -3,9 +3,9 @@ package quadcore.eightpuzzle.model.heuristics;
 import quadcore.eightpuzzle.model.State;
 
 import java.awt.*;
-import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 
-public class EuclideanHeuristic implements Function<State, Double> {
+public class EuclideanHeuristic implements ToDoubleFunction<State> {
 
     private static EuclideanHeuristic instance;
 
@@ -16,20 +16,30 @@ public class EuclideanHeuristic implements Function<State, Double> {
         if (instance == null) instance = new EuclideanHeuristic();
         return instance;
     }
-    private Point[] stateToPoints(String state) {
-        char[] nodes = new char[9];
-        return ManhattanHeuristic.getPoints(state, nodes);
+
+    private Point[] getPoints(char[] state) {
+        Point[] stateCoordinates = new Point[9];
+        for (int i = 0; i < 9; i++) {
+            int x = Character.getNumericValue(state[i]) % 3;
+            int y = Character.getNumericValue(state[i]) / 3;
+            stateCoordinates[i] = new Point(x, y);
+        }
+        return stateCoordinates;
     }
 
+
+
+
     @Override
-    public Double apply(State state) {
+    public double applyAsDouble(State state) {
         String strState = state.getAsString();
-        Point[] stateCoordinates = stateToPoints(strState);
-        Point[] goalCoordinates = stateToPoints("012345678");
-        double euclidean = 0;
+        char[] stateArray = strState.toCharArray();
+        Point[] stateCoordinates = getPoints(stateArray);
+        Point[] goalCoordinates = getPoints(new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8'});
+        double euclidean = 0.0;
         for (int i = 0; i < 9; i++) {
-            int diffX = Math.abs(stateCoordinates[i].x - goalCoordinates[i].x);
-            int diffY = Math.abs(stateCoordinates[i].y - goalCoordinates[i].y);
+            double diffX = Math.abs(stateCoordinates[i].x - goalCoordinates[i].x);
+            double diffY = Math.abs(stateCoordinates[i].y - goalCoordinates[i].y);
             double distance = Math.sqrt(Math.pow(diffX,2)+Math.pow(diffY,2));
             euclidean += distance;
         }
