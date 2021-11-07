@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 public class AStar extends PuzzleSolver {
 
-    public AStar(Function<State, Integer> heuristic) {
+    public AStar(Function<State, Double> heuristic) {
         //todo: implementation & pass the heuristic function in the constructor
     }
 
