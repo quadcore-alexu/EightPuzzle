@@ -3,6 +3,7 @@ package quadcore.eightpuzzle.model;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,28 +11,31 @@ class EightPuzzleStateTest {
 
     @Test
     void invalid() {
+
         assertTrue(State.isValid("087654321"));
+        assertTrue(State.isValid("628570431"));
         assertTrue(State.isValid("012345678"));
         assertFalse(State.isValid("012345677"));
         assertFalse(State.isValid("012345678p"));
         assertFalse(State.isValid("01234578"));
         assertFalse(State.isValid("012345789"));
+        assertFalse(State.isValid("812043765")); //unsolvable
     }
 
     @Test
     void isGoal() {
         assertTrue(new EightPuzzleState("012345678").isGoal());
-        assertFalse(new EightPuzzleState("012346578").isGoal());
+        assertFalse(new EightPuzzleState("102345678").isGoal());
     }
 
     @Test
     void getPossibleNextStates1() {
-        String str = "105682347";
+        String str = "628570431";
         State state = new EightPuzzleState(str);
         List<State> nextStates = state.getPossibleNextStates();
-        assertTrue(nextStates.contains(new EightPuzzleState("185602347")));
-        assertTrue(nextStates.contains(new EightPuzzleState("150682347")));
-        assertTrue(nextStates.contains(new EightPuzzleState("015682347")));
+        assertTrue(nextStates.contains(new EightPuzzleState("620578431")));
+        assertTrue(nextStates.contains(new EightPuzzleState("628507431")));
+        assertEquals(3, nextStates.size());
     }
 
     @Test
@@ -56,7 +60,7 @@ class EightPuzzleStateTest {
 
     @Test
     void getAsString() {
-        String str = "087654231";
+        String str = "087654321";
         State state = new EightPuzzleState(str);
         assertEquals(str, state.getAsString());
         str = "012345678";

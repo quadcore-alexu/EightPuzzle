@@ -38,7 +38,6 @@ public class Game {
      * This should be called after {@code `solve()`}.
      *
      * @return the solution as a list of states.
-     * @throws NullPointerException if {@code `solve()`} method was not called or did not terminate successfully.
      */
     public List<State> getSolution() {
         return puzzleSolver.getSolution();
@@ -49,7 +48,6 @@ public class Game {
      *
      * @return the root of the tree as a tree node.
      * This should be called after {@code `solve()`}.
-     * @throws NullPointerException if {@code `solve()`} method was not called or did not terminate successfully.
      */
     public TreeNode<State> getSearchTree() {
         return puzzleSolver.getSearchTree();
