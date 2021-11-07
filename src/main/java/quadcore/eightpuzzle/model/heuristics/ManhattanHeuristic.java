@@ -1,12 +1,10 @@
 package quadcore.eightpuzzle.model.heuristics;
-
-import org.jetbrains.annotations.NotNull;
 import quadcore.eightpuzzle.model.State;
 
 import java.awt.*;
-import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 
-public class ManhattanHeuristic implements Function<State, Double> {
+public class ManhattanHeuristic implements ToDoubleFunction<State> {
 
     private static ManhattanHeuristic instance;
 
@@ -18,30 +16,28 @@ public class ManhattanHeuristic implements Function<State, Double> {
         return instance;
     }
 
-    private Point[] stateToPoints(String state) {
-        char[] nodes = new char[9];
-        return getPoints(state, nodes);
-    }
 
-    @NotNull
-    static Point[] getPoints(String state, char[] nodes) {
+
+    private Point[] getPoints(char[] state) {
         Point[] stateCoordinates = new Point[9];
-
         for (int i = 0; i < 9; i++) {
-            nodes[i] = state.charAt(i);
-            int x = nodes[i] % 3;
-            int y = nodes[i] / 3;
+            int x = Character.getNumericValue(state[i]) % 3;
+            int y = Character.getNumericValue(state[i]) / 3;
             stateCoordinates[i] = new Point(x, y);
         }
         return stateCoordinates;
     }
 
+
+
+
     @Override
-    public Double apply(State state) {
+    public double applyAsDouble(State state) {
         String strState = state.getAsString();
-        Point[] stateCoordinates = stateToPoints(strState);
-        Point[] goalCoordinates = stateToPoints("012345678");
-        double manhattan = 0;
+        char[] stateArray = strState.toCharArray();
+        Point[] stateCoordinates = getPoints(stateArray);
+        Point[] goalCoordinates = getPoints(new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8'});
+        double manhattan = 0.0;
         for (int i = 0; i < 9; i++) {
             int diffX = Math.abs(stateCoordinates[i].x - goalCoordinates[i].x);
             int diffY = Math.abs(stateCoordinates[i].y - goalCoordinates[i].y);

@@ -1,14 +1,11 @@
 package quadcore.eightpuzzle.model.strategies;
 
 import quadcore.eightpuzzle.model.State;
-import quadcore.eightpuzzle.model.datastructures.TreeNode;
-
-import java.util.List;
-import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 
 public class AStar extends PuzzleSolver {
 
-    public AStar(Function<State, Double> heuristic) {
+    public AStar(ToDoubleFunction<State> heuristic) {
         //todo: implementation & pass the heuristic function in the constructor
     }
 
