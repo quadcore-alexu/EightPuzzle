@@ -29,7 +29,6 @@ public class Game {
      */
     public boolean solve(String initialState) {
         State state = new EightPuzzleState(initialState);
-        if (!state.isValid()) throw new IllegalArgumentException("State is inconsistent");
         return puzzleSolver.solve(state);
     }
 

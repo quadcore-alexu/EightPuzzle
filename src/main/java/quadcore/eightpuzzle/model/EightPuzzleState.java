@@ -1,52 +1,83 @@
 package quadcore.eightpuzzle.model;
 
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
 import java.util.List;
 
 public class EightPuzzleState implements State {
 
-    private final BitSet bitSet = new BitSet(36);
-    private int zeroPos;
-
-    public EightPuzzleState(String stateRepresentation) {
-        zeroPos = stateRepresentation.indexOf('0');
-        //todo
+    private class Point {
+        final int x;
+        final int y;
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 
-    @Override
-    public boolean isValid() {
-        //this regex ensures that it has only ten digits and that each digit occurs only once
-        return getAsString().matches("^(?!.*(.).*\\1)\\d{10}");
+//    private final BitSet bitSet = new BitSet(36);
+    private final String state;
+    private final Point zeroPos;
+
+    public EightPuzzleState(String stateRepresentation) {
+        if (!State.isValid(stateRepresentation)) throw new IllegalArgumentException("Initial state is inconsistent");
+        state = stateRepresentation;
+        int index = stateRepresentation.indexOf('0');
+        zeroPos = new Point(index % 3, index / 3);
     }
 
     @Override
     public boolean isGoal() {
-        return getAsString().equals("0123456789");
+        return getAsString().equals("012345678");
     }
 
     @Override
     public List<State> getPossibleNextStates() {
-        List<State> next = new ArrayList<>(4);
-        return null;
+        List<State> nextStates = new ArrayList<>(4);
+
+        int x = zeroPos.x;
+        int y = zeroPos.y;
+
+        //left
+        if (x > 0) nextStates.add(getNextState(new Point(x, y), new Point(x - 1, y)));
+        //right
+        if (x < 2) nextStates.add(getNextState(new Point(x, y), new Point(x + 1, y)));
+        //up
+        if (y > 0) nextStates.add(getNextState(new Point(x, y), new Point(x, y - 1)));
+        //down
+        if (y < 2) nextStates.add(getNextState(new Point(x, y), new Point(x, y + 1)));
+
+        return nextStates;
     }
 
     @Override
     public String getAsString() {
         //todo: implementation
-        return null;
+        return state;
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof EightPuzzleState)
-            return Arrays.equals(this.bitSet.toLongArray(), ((EightPuzzleState) obj).bitSet.toLongArray());
+            return state.equals(((EightPuzzleState) obj).state);
+            //return Arrays.equals(this.bitSet.toLongArray(), ((EightPuzzleState) obj).bitSet.toLongArray());
         return false;
     }
 
     public int hashCode() {
-        return Arrays.hashCode(bitSet.toLongArray());
+        return state.hashCode();
+        //return Arrays.hashCode(bitSet.toLongArray());
+    }
+
+    private State getNextState(Point p1, Point p2) {
+        StringBuilder stringBuilder = new StringBuilder(getAsString());
+        int firstIndex = 3 * p1.y + p1.x;
+        char first = stringBuilder.charAt(firstIndex);
+        int secondIndex = 3 * p2.y + p2.x;
+        char second = stringBuilder.charAt(secondIndex);
+        stringBuilder.replace(firstIndex, firstIndex + 1, String.valueOf(second));
+        stringBuilder.replace(secondIndex, secondIndex + 1, String.valueOf(first));
+        return new EightPuzzleState(stringBuilder.toString());
     }
 
 }
