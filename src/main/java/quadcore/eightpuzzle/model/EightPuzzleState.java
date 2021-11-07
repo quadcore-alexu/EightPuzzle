@@ -15,6 +15,7 @@ public class EightPuzzleState implements State {
     private final Point zeroPos;
 
     public EightPuzzleState(String stateRepresentation) {
+        System.out.println(stateRepresentation);
         if (!State.isValid(stateRepresentation)) throw new IllegalArgumentException("Initial state is inconsistent");
         state = stateRepresentation;
         int index = stateRepresentation.indexOf('0');

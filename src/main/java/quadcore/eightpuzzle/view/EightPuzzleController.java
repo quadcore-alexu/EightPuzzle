@@ -2,9 +2,7 @@ package quadcore.eightpuzzle.view;
 
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
+
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import quadcore.eightpuzzle.model.Game;
 
 import java.io.IOException;
 import java.net.URL;
@@ -30,9 +29,11 @@ public class EightPuzzleController implements Initializable {
     private TranslateTransition backTrans;
     private String strategy;
     private String heuristic;
-    private String initialState="";
+    private String initialState = "";
     private boolean lock;
-    private Map<String,String> initialBoard;
+    private Map<String, String> initialBoard;
+    private Map<Integer, String> orderedTiles;
+    private Game game;
 
     @FXML
     private Pane boardPane;
@@ -65,6 +66,7 @@ public class EightPuzzleController implements Initializable {
     private TextField tileEight;
     @FXML
     private TextField tileNine;
+
     public EightPuzzleController() {
     }
 
@@ -80,32 +82,28 @@ public class EightPuzzleController implements Initializable {
     }
 
     @FXML
-    protected void setInitialState(Event event)
-    {
+    protected void setInitialState(Event event) {
         TextField tile = (TextField) event.getSource();
-        initialBoard.put(tile.getId(),tile.getText());
+        initialBoard.put(tile.getId(), tile.getText());
         System.out.printf((String) initialBoard.get(tile.getId()));
     }
 
     @FXML
-    protected void onStrategySelected()
-    {
-      strategy = (String) strategies.getValue();
-      if (strategy.equals("A*"))
-          heuristics.setVisible(true);
-      else
-          heuristics.setVisible(false);
-      System.out.printf("Strategy");
+    protected void onStrategySelected() {
+        strategy = (String) strategies.getValue();
+        if (strategy.equals("A*"))
+            heuristics.setVisible(true);
+        else
+            heuristics.setVisible(false);
+        System.out.printf("Strategy");
     }
 
     @FXML
-    protected void onHeuristicSelected()
-    {
+    protected void onHeuristicSelected() {
         heuristic = (String) heuristics.getValue();
-;
+        ;
         System.out.printf(heuristic);
     }
-
 
 
     @FXML
@@ -136,26 +134,29 @@ public class EightPuzzleController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        boardPane.setMaxWidth(UIConstants.TILE_SIDE_LENGTH*3);
-        boardPane.setMaxHeight(UIConstants.TILE_SIDE_LENGTH*3);
+        boardPane.setMaxWidth(UIConstants.TILE_SIDE_LENGTH * 3);
+        boardPane.setMaxHeight(UIConstants.TILE_SIDE_LENGTH * 3);
         trans = new TranslateTransition(Duration.seconds(1));
         backTrans = new TranslateTransition(Duration.millis(0.1));
         //TODO: replace the passed array of strings with path solution array
-        statesManipulator = new StatesManipulator(new String[] { "125340678", "120345678", "102345678", "012345678" });
+        statesManipulator = new StatesManipulator(new String[]{"125340678", "120345678", "102345678", "012345678"});
         boardPane.getChildren().add(createBoard("125340678"));
         strategies.getItems().clear();
-        strategies.getItems().addAll("BFS","DFS","A*");
+        strategies.getItems().addAll("BFS", "DFS", "A*");
         heuristics.getItems().clear();
-        heuristics.getItems().addAll("Manhattan distance","Euclidean distance");
+        heuristics.getItems().addAll("Manhattan distance", "Euclidean distance");
         heuristics.setVisible(false);
-        initialBoard = new HashMap<String,String>();
+        initialBoard = new HashMap<>();
         errorLabel.setVisible(false);
+        initializeOrderedTiles();
+        game = new Game();
 
     }
 
     /**
      * Renders the board for initial state
      * And return gridPane carrying the board tiles
+     *
      * @param initialState initial state of the board
      */
     public GridPane createBoard(String initialState) {
@@ -163,7 +164,7 @@ public class EightPuzzleController implements Initializable {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 Rectangle tile = new Rectangle(UIConstants.TILE_SIDE_LENGTH, UIConstants.TILE_SIDE_LENGTH);
-                Text text = new Text(initialState.charAt(i*3+j) +"");
+                Text text = new Text(initialState.charAt(i * 3 + j) + "");
                 tile.setFill(UIConstants.TILE_COLOR);
                 text.setFill(Color.WHITESMOKE);
                 text.setFont(Font.font("Sitka Banner", 40));
@@ -183,38 +184,56 @@ public class EightPuzzleController implements Initializable {
      * The tile moves with a transition
      * A callback function is called at the end of transition
      * to commit board new state
+     *
      * @param tileNumber moving tile index
-     * @param xDir moved units on X axis
-     * @param yDir moved units on Y axis
+     * @param xDir       moved units on X axis
+     * @param yDir       moved units on Y axis
      */
     private void moveTile(int tileNumber, int xDir, int yDir) {
-        StackPane tile = (StackPane)((GridPane)boardPane.getChildren().get(0)).getChildren().get(tileNumber);
+        StackPane tile = (StackPane) ((GridPane) boardPane.getChildren().get(1)).getChildren().get(tileNumber);
         trans.setNode(tile);
-        trans.setToX(UIConstants.TILE_SIDE_LENGTH*xDir);
-        trans.setToY(UIConstants.TILE_SIDE_LENGTH*yDir);
+        trans.setToX(UIConstants.TILE_SIDE_LENGTH * xDir);
+        trans.setToY(UIConstants.TILE_SIDE_LENGTH * yDir);
         trans.setOnFinished(event -> {
-            swapTileWithEmpty(tileNumber, tileNumber+xDir+3*yDir);
+            swapTileWithEmpty(tileNumber, tileNumber + xDir + 3 * yDir);
             backTrans.setNode(tile);
             backTrans.setToX(0);
             backTrans.setToY(0);
-            backTrans.setOnFinished(e -> { lock = false; checkGoalState();});
+            backTrans.setOnFinished(e -> {
+                lock = false;
+                checkGoalState();
+            });
             backTrans.play();
         });
         trans.play();
     }
 
+    private void initializeOrderedTiles() {
+        orderedTiles = new HashMap<>();
+        orderedTiles.put(1, "tileOne");
+        orderedTiles.put(2, "tileTwo");
+        orderedTiles.put(3, "tileThree");
+        orderedTiles.put(4, "tileFour");
+        orderedTiles.put(5, "tileFive");
+        orderedTiles.put(6, "tileSix");
+        orderedTiles.put(7, "tileSeven");
+        orderedTiles.put(8, "tileEight");
+        orderedTiles.put(9, "tileNine");
+
+    }
 
 
     /**
      * Commits the board new state
      * It assign the moving tile to its new position
      * Swapping it with the empty tile
-     * @param firstTileIndex moving tile index
+     *
+     * @param firstTileIndex  moving tile index
      * @param secondTileIndex moving tile destination (empty tile index)
      */
     private void swapTileWithEmpty(int firstTileIndex, int secondTileIndex) {
-        StackPane firstTile = (StackPane)((GridPane)boardPane.getChildren().get(0)).getChildren().get(firstTileIndex);
-        StackPane secondTile = (StackPane)((GridPane)boardPane.getChildren().get(0)).getChildren().get(secondTileIndex);
+        StackPane firstTile = (StackPane) ((GridPane) boardPane.getChildren().get(1)).getChildren().get(firstTileIndex);
+        StackPane secondTile = (StackPane) ((GridPane) boardPane.getChildren().get(1)).getChildren().get(secondTileIndex);
         Text firstText = ((Text) firstTile.getChildren().get(1));
         Text secondText = ((Text) secondTile.getChildren().get(1));
         Rectangle firstBG = ((Rectangle) firstTile.getChildren().get(0));
@@ -229,21 +248,24 @@ public class EightPuzzleController implements Initializable {
      * Checks whether the goal state reached then color the board goal color
      */
     private void checkGoalState() {
-        if (!statesManipulator.hasNext()) {colorBoard(true);}
+        if (!statesManipulator.hasNext()) {
+            colorBoard(true);
+        }
     }
 
     /**
      * Color all tiles either by normal state color
      * Or by goal color
+     *
      * @param isGoal Determines whether goal state reached or not
      */
     private void colorBoard(boolean isGoal) {
         Color color = isGoal ? UIConstants.GOAL_COLOR : UIConstants.TILE_COLOR;
-        Iterator<Node> iterator= ((GridPane)boardPane.getChildren().get(0)).getChildren().listIterator();
+        Iterator<Node> iterator = ((GridPane) boardPane.getChildren().get(1)).getChildren().listIterator();
         while (iterator.hasNext()) {
             Node node = iterator.next();
-            Rectangle r = ((Rectangle)((StackPane)node).getChildren().get(0));
-            Text text = ((Text)((StackPane)node).getChildren().get(1));
+            Rectangle r = ((Rectangle) ((StackPane) node).getChildren().get(0));
+            Text text = ((Text) ((StackPane) node).getChildren().get(1));
             if (text.getText().equals(""))
                 r.setFill(Color.TRANSPARENT);
             else
@@ -251,51 +273,47 @@ public class EightPuzzleController implements Initializable {
         }
     }
 
-    private boolean isValidTileValue(String value)
-    {
-        if(value.length()>1) return false;
-        if(Character.isDigit(value.charAt(0)))
-        {
-            return Integer.parseInt(value)<9 ? true:false;
+    private boolean isValidTileValue(String value) {
+        if (value.length() > 1) return false;
+        if (Character.isDigit(value.charAt(0))) {
+            return Integer.parseInt(value) < 9 && Integer.parseInt(value) >= 0 ? true : false;
         }
         return false;
     }
 
-    private boolean isDuplicateValue(String value)
-    {
+    private boolean isDuplicateValue(String value) {
         return initialState.contains(value);
     }
 
     @FXML
-    private boolean isValidInitialState()
-    {
+    private boolean isValidInitialState() {
+        System.out.println(initialBoard.size());
+        if (initialBoard.size() < 9) issueError();
+        String value = "";
+        for (int i = 1; i <= 9; i++) {
 
-        if (initialBoard.size()<9) issueError();
-        for (Map.Entry<String,String> entry : initialBoard.entrySet())
-        {
+            value = initialBoard.get(orderedTiles.get(Integer.valueOf(i)));
+            if (isValidTileValue(value) && !isDuplicateValue(value)) {
+                initialState += value;
+            } else {
+                System.out.println(value);
+                issueError();
+                resetInitialState();
+                return false;
 
-              if (isValidTileValue(entry.getValue()) && !isDuplicateValue(entry.getValue()))
-              {
-                  initialState += entry.getValue();
-              }
-              else {
-                  issueError();
-                  resetInitialState();
-                  return false;
-
-              }
+            }
         }
+        solve();
         return true;
     }
 
-    private void resetInitialState()
-    {
-        initialState="";
+    private void resetInitialState() {
+        initialState = "";
         initialBoard = new HashMap<>();
 
     }
-    private void issueError()
-    {
+
+    private void issueError() {
         errorLabel.setText("INVALID STATE!");
         errorLabel.setVisible(true);
         PauseTransition visiblePause = new PauseTransition(
@@ -306,5 +324,11 @@ public class EightPuzzleController implements Initializable {
         );
         visiblePause.play();
     }
+
+    private void solve() {
+        game.setPuzzleSolver(strategy);
+        game.solve(initialState);
+    }
+
 
 }
