@@ -1,5 +1,6 @@
 package quadcore.eightpuzzle.model.strategies;
 
+import org.javatuples.Pair;
 import quadcore.eightpuzzle.model.State;
 import quadcore.eightpuzzle.model.datastructures.TreeNode;
 
@@ -12,11 +13,12 @@ public class DFS extends PuzzleSolver {
 
     @Override
     public boolean solve(State initialState) {
+        reset();
         if (initialState == null) throw new NullPointerException("Initial state is null");
 
         Deque<State> frontier = new LinkedList<>();
         Set<State> explored = new HashSet<>();
-        Map<State, TreeNode<State>> parents = new HashMap<>();
+        Map<State, Pair<TreeNode<State>, Integer>> map = new HashMap<>();
 
         frontier.push(initialState);
 
@@ -28,9 +30,12 @@ public class DFS extends PuzzleSolver {
 
             //add to search tree
             if (state == initialState) {
-                parents.put(initialState, node);
+                map.put(initialState, Pair.with(node, 0));
                 searchTree = node;
-            } else parents.get(state).addChild(node);
+            } else {
+                map.get(state).getValue0().addChild(node);
+                updateMaxDepth(map.get(state).getValue1());
+            }
 
             //if goal
             if (state.isGoal()) {
@@ -40,10 +45,11 @@ public class DFS extends PuzzleSolver {
 
             //add neighbours to stack
             List<State> neighbours = state.getPossibleNextStates();
+            int depth = map.get(state).getValue1();
             for (State neighbour : neighbours) {
                 if (!frontier.contains(neighbour) && !explored.contains(neighbour)) {
                     frontier.push(neighbour);
-                    parents.put(neighbour, node);
+                    map.put(neighbour, Pair.with(node, depth + 1));
                 }
             }
         }

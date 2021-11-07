@@ -11,6 +11,7 @@ public abstract class PuzzleSolver {
 
     protected TreeNode<State> searchTree;
     protected List<State> solution;
+    protected int maxDepth = 0;
 
     public abstract boolean solve(State initialState);
 
@@ -24,6 +25,10 @@ public abstract class PuzzleSolver {
         return searchTree;
     }
 
+    public int getMaxDepth() {
+        return maxDepth;
+    }
+
     protected @NotNull List<State> getSolFromTree(TreeNode<State> goal) {
         List<State> sol = new LinkedList<>();
         TreeNode<State> node = goal;
@@ -34,4 +39,13 @@ public abstract class PuzzleSolver {
         return sol;
     }
 
+    protected void updateMaxDepth(int depth) {
+        if (depth > maxDepth) maxDepth = depth;
+    }
+
+    protected void reset() {
+        searchTree = null;
+        solution = null;
+        maxDepth = 0;
+    }
 }

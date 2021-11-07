@@ -28,8 +28,4 @@ class TreeNodeTest {
         assertEquals(1, treeNode.getValue());
     }
 
-    @Test
-    void getDepth() {
-        assertEquals(3, treeNode.getDepth());
-    }
 }
