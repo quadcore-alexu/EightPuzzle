@@ -2,14 +2,15 @@ package quadcore.eightpuzzle.view;
 
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
-
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -34,6 +35,7 @@ public class EightPuzzleController implements Initializable {
     private Map<String, String> initialBoard;
     private Map<Integer, String> orderedTiles;
     private Game game;
+    private final String tileStyle = "-fx-font: 30px \"Sitka Banner\"; -fx-background-color:  #ffdbc5; -fx-border-color:  #b01c33; -fx-border-width: 2; -fx-padding: 2 ;-fx-text-alignment: center";
 
     @FXML
     private Pane boardPane;
@@ -43,6 +45,10 @@ public class EightPuzzleController implements Initializable {
     private Label errorLabel;
     @FXML
     private Button solve;
+    @FXML
+    private ImageView backImage;
+    @FXML
+    private ImageView nextImage;
 
     @FXML
     private ComboBox strategies;
@@ -138,7 +144,9 @@ public class EightPuzzleController implements Initializable {
         boardPane.setMaxHeight(UIConstants.TILE_SIDE_LENGTH * 3);
         trans = new TranslateTransition(Duration.seconds(1));
         backTrans = new TranslateTransition(Duration.millis(0.1));
+
         //TODO: replace the passed array of strings with path solution array
+        setStyles();
         statesManipulator = new StatesManipulator(new String[]{"125340678", "120345678", "102345678", "012345678"});
         boardPane.getChildren().add(createBoard("125340678"));
         strategies.getItems().clear();
@@ -190,7 +198,7 @@ public class EightPuzzleController implements Initializable {
      * @param yDir       moved units on Y axis
      */
     private void moveTile(int tileNumber, int xDir, int yDir) {
-        StackPane tile = (StackPane) ((GridPane) boardPane.getChildren().get(1)).getChildren().get(tileNumber);
+        StackPane tile = (StackPane) ((GridPane) boardPane.getChildren().get(0)).getChildren().get(tileNumber);
         trans.setNode(tile);
         trans.setToX(UIConstants.TILE_SIDE_LENGTH * xDir);
         trans.setToY(UIConstants.TILE_SIDE_LENGTH * yDir);
@@ -232,8 +240,8 @@ public class EightPuzzleController implements Initializable {
      * @param secondTileIndex moving tile destination (empty tile index)
      */
     private void swapTileWithEmpty(int firstTileIndex, int secondTileIndex) {
-        StackPane firstTile = (StackPane) ((GridPane) boardPane.getChildren().get(1)).getChildren().get(firstTileIndex);
-        StackPane secondTile = (StackPane) ((GridPane) boardPane.getChildren().get(1)).getChildren().get(secondTileIndex);
+        StackPane firstTile = (StackPane) ((GridPane) boardPane.getChildren().get(0)).getChildren().get(firstTileIndex);
+        StackPane secondTile = (StackPane) ((GridPane) boardPane.getChildren().get(0)).getChildren().get(secondTileIndex);
         Text firstText = ((Text) firstTile.getChildren().get(1));
         Text secondText = ((Text) secondTile.getChildren().get(1));
         Rectangle firstBG = ((Rectangle) firstTile.getChildren().get(0));
@@ -242,6 +250,31 @@ public class EightPuzzleController implements Initializable {
         secondText.setText(firstText.getText());
         firstBG.setFill(Color.TRANSPARENT);
         firstText.setText("");
+    }
+
+    private void setStyles() {
+        tileOne.setStyle(tileStyle);
+        tileTwo.setStyle(tileStyle);
+        tileThree.setStyle(tileStyle);
+        tileFour.setStyle(tileStyle);
+        tileFive.setStyle(tileStyle);
+        tileSix.setStyle(tileStyle);
+        tileSeven.setStyle(tileStyle);
+        tileEight.setStyle(tileStyle);
+        tileNine.setStyle(tileStyle);
+        heuristics.setStyle("-fx-font: 20px \"Sitka Banner\"; -fx-background-color:  #ffdbc5; -fx-border-color: #ef4339;-fx-border-width: 5");
+        strategies.setStyle("-fx-font: 20px \"Sitka Banner\"; -fx-background-color:  #ffdbc5; -jfx-unfocus-color: white;-fx-border-color: #ef4339;-fx-border-width: 3");
+        tileOne.setAlignment(Pos.CENTER);
+        tileTwo.setAlignment(Pos.CENTER);
+        tileThree.setAlignment(Pos.CENTER);
+        tileFour.setAlignment(Pos.CENTER);
+        tileFive.setAlignment(Pos.CENTER);
+        tileSix.setAlignment(Pos.CENTER);
+        tileSeven.setAlignment(Pos.CENTER);
+        tileEight.setAlignment(Pos.CENTER);
+        tileNine.setAlignment(Pos.CENTER);
+        solve.setStyle("-fx-font: 20px \"Sitka Banner\"; -fx-background-color:  #ffdbc5;");
+
     }
 
     /**
@@ -261,7 +294,7 @@ public class EightPuzzleController implements Initializable {
      */
     private void colorBoard(boolean isGoal) {
         Color color = isGoal ? UIConstants.GOAL_COLOR : UIConstants.TILE_COLOR;
-        Iterator<Node> iterator = ((GridPane) boardPane.getChildren().get(1)).getChildren().listIterator();
+        Iterator<Node> iterator = ((GridPane) boardPane.getChildren().get(0)).getChildren().listIterator();
         while (iterator.hasNext()) {
             Node node = iterator.next();
             Rectangle r = ((Rectangle) ((StackPane) node).getChildren().get(0));
