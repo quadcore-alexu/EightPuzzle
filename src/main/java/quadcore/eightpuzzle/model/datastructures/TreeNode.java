@@ -2,12 +2,14 @@ package quadcore.eightpuzzle.model.datastructures;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class TreeNode<T> {
 
     private final T value;
     private TreeNode<T> parent;
     private final List<TreeNode<T>> children = new ArrayList<>();
+    private boolean marked = false;
 
     /**
      * Creates a new tree node using the passed value.
@@ -50,5 +52,15 @@ public class TreeNode<T> {
         return parent;
     }
 
+    public boolean isMarked() {
+        return marked;
+    }
 
+    public void markPathToParent() {
+        TreeNode<T> node = this;
+        while (node != null) {
+            node.marked = true;
+            node = node.parent;
+        }
+    }
 }

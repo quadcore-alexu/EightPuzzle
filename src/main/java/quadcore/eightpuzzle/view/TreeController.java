@@ -12,9 +12,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import quadcore.eightpuzzle.model.datastructures.TreeNode;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Stack;
 
 public class TreeController implements Initializable {
     private int[] levels;
@@ -31,7 +33,7 @@ public class TreeController implements Initializable {
         levels = new int[8];
         treePane = new AnchorPane();
         // TODO: replace buildDummyTree call with a call on solution model
-        buildSearchTree(0, 0, buildDummyTree(), 0);
+        buildSearchTree(buildDummyTree());
         scrollPane.setContent(treePane);
         scrollPane.setPannable(true);
     }
@@ -48,47 +50,45 @@ public class TreeController implements Initializable {
     /**
      * Traverses the given tree and renders each of its states
      * Drawing lines between parent node and its children
-     * @param parentX parent node X coordinate
-     * @param parentY parent node Y coordinate
-     * @param node current node to be rendered
-     * @param level node level in tree
+     * @param root current node to be rendered
      */
-    public void buildSearchTree(int parentX,int parentY,DummyNode node, int level){
+    public void buildSearchTree(TreeNode<String> root){
         double sideLength = UIConstants.TREE_TILE_SIDE_LENGTH;
-        int nodeY = parentY + (int)sideLength*3*3/2;
-        int nodeX = pivotalX + (int)(sideLength*3+20) * levels[level];
-        levels[level]++;
-        Line line = new Line(nodeX, nodeY-sideLength*3/2, parentX, parentY+sideLength*3/2);
-        if (level > 0)
-            treePane.getChildren().add(line);
-        drawState(nodeX, nodeY, node.state);
-        for (int i = 0; i < node.children.size(); i++) {
-            buildSearchTree(nodeX, nodeY, node.children.get(i), level+1);
+        Stack<GraphicTreeNode> stack = new Stack<>();
+        stack.push(new GraphicTreeNode(pivotalX, 0, root, 0));
+        while (!stack.empty()) {
+            GraphicTreeNode node = stack.pop();
+            int nodeY = node.getParentY() + (int)sideLength*3*3/2;
+            int nodeX = pivotalX + (int)(sideLength*3+20) * levels[node.getLevel()];
+            levels[node.getLevel()]++;
+            Line line = new Line(nodeX, nodeY-sideLength*3/2,
+                                 node.getParentX(), node.getParentY()+sideLength*3/2);
+            if (node.getLevel() > 0)
+                treePane.getChildren().add(line);
+            drawState(nodeX, nodeY, node.getState(), node.isMarked());
+
+            for (int i = 0; i < node.getChildren().size(); i++) {
+                stack.push(new GraphicTreeNode(nodeX, nodeY, node.getChildren().get(i), node.getLevel()+1));
+            }
         }
     }
 
     // TODO: remove this function
-    public DummyNode buildDummyTree() {
-        DummyNode n1 = new DummyNode();
-        DummyNode n2 = new DummyNode();
-        DummyNode n3 = new DummyNode();
-        DummyNode n4 = new DummyNode();
-        DummyNode n5 = new DummyNode();
-        DummyNode n6 = new DummyNode();
-        DummyNode n7 = new DummyNode();
-        n1.children.add(n2);
-        n1.children.add(n3);
-        n1.children.add(n4);
-        n2.children.add(n5);
-        n5.children.add(n6);
-        n5.children.add(n7);
-        n1.state = "125340678";
-        n2.state = "120345678";
-        n3.state = "125348670";
-        n4.state = "125304678";
-        n5.state = "102345678";
-        n6.state = "012345678";
-        n7.state = "142305678";
+    public TreeNode<String> buildDummyTree() {
+        TreeNode<String> n1 = new TreeNode<String>("125340678");
+        TreeNode<String> n2 = new TreeNode<String>("120345678");
+        TreeNode<String> n3 = new TreeNode<String>("125348670");
+        TreeNode<String> n4 = new TreeNode<String>("125304678");
+        TreeNode<String> n5 = new TreeNode<String>("102345678");
+        TreeNode<String> n6 = new TreeNode<String>("012345678");
+        TreeNode<String> n7 = new TreeNode<String>("142305678");
+        n1.addChild(n2);
+        n1.addChild(n3);
+        n1.addChild(n4);
+        n2.addChild(n5);
+        n5.addChild(n6);
+        n5.addChild(n7);
+        n6.markPathToParent();
         return n1;
     }
 
@@ -99,14 +99,17 @@ public class TreeController implements Initializable {
      * @param nodalX board center X coordinate
      * @param nodalY board center Y coordinate
      * @param state board state
+     * @param isMarked whether the node on goal path
      */
-    private void drawState(double nodalX, double nodalY, String state) {
+    private void drawState(double nodalX, double nodalY, String state, boolean isMarked) {
+        Color color = UIConstants.TILE_COLOR;
+        if (isMarked) color = UIConstants.GOAL_COLOR;
         GridPane gameBoard = new GridPane();
         double sideLength = UIConstants.TREE_TILE_SIDE_LENGTH;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 Rectangle tile = new Rectangle(sideLength, sideLength);
-                tile.setFill(UIConstants.TILE_COLOR);
+                tile.setFill(color);
                 Text text = new Text(state.charAt(i*3+j)+"");
                 text.setFill(Color.WHITESMOKE);
                 text.setFont(Font.font("Sitka Banner", 12));
@@ -121,6 +124,4 @@ public class TreeController implements Initializable {
         treePane.getChildren().add(gameBoard);
         treePane.setPrefHeight(Math.max(treePane.getHeight(), nodalY+sideLength*3/2));
     }
-
-    //TODO: Enhancement may be added coloring the path
 }
