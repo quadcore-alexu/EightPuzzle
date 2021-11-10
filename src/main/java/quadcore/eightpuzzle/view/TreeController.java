@@ -55,12 +55,13 @@ public class TreeController implements Initializable {
     public void buildSearchTree(TreeNode<String> root){
         double sideLength = UIConstants.TREE_TILE_SIDE_LENGTH;
         Stack<GraphicTreeNode> stack = new Stack<>();
-        stack.push(new GraphicTreeNode(pivotalX, 0, root, 0));
+        stack.push(new GraphicTreeNode(pivotalX, 0, root, 0, 0));
         while (!stack.empty()) {
             GraphicTreeNode node = stack.pop();
             int nodeY = node.getParentY() + (int)sideLength*3*3/2;
-            int nodeX = pivotalX + (int)(sideLength*3+20) * levels[node.getLevel()];
-            levels[node.getLevel()]++;
+            int slot = Math.max(node.getParentSlot(), levels[node.getLevel()]);
+            int nodeX = pivotalX + (int)(sideLength*3+20) * slot;
+            levels[node.getLevel()] = slot+1;
             Line line = new Line(nodeX, nodeY-sideLength*3/2,
                                  node.getParentX(), node.getParentY()+sideLength*3/2);
             if (node.getLevel() > 0)
@@ -68,7 +69,7 @@ public class TreeController implements Initializable {
             drawState(nodeX, nodeY, node.getState(), node.isMarked());
 
             for (int i = 0; i < node.getChildren().size(); i++) {
-                stack.push(new GraphicTreeNode(nodeX, nodeY, node.getChildren().get(i), node.getLevel()+1));
+                stack.push(new GraphicTreeNode(nodeX, nodeY, node.getChildren().get(i), node.getLevel()+1, slot));
             }
         }
     }
