@@ -3,7 +3,6 @@ package quadcore.eightpuzzle.model;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +18,7 @@ class EightPuzzleStateTest {
         assertFalse(State.isValid("012345678p"));
         assertFalse(State.isValid("01234578"));
         assertFalse(State.isValid("012345789"));
-        assertFalse(State.isValid("812043765"));
+        assertTrue(State.isValid("812043765"));
     }
 
     @Test

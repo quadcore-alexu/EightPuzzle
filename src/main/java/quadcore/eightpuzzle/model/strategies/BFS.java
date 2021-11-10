@@ -18,14 +18,12 @@ public class BFS extends PuzzleSolver {
         Game.LOGGER.info("Starting " + this.getClass().getSimpleName());
 
         Queue<State> frontier = new LinkedList<>();
-        Set<State> explored = new HashSet<>();
         Map<State, Pair<TreeNode<State>, Integer>> map = new HashMap<>();
 
         frontier.add(initialState);
 
         while (!frontier.isEmpty()) {
             State state = frontier.poll();
-            explored.add(state);
             int currentDepth = 0;
             TreeNode<State> node = new TreeNode<>(state);
 
@@ -53,7 +51,7 @@ public class BFS extends PuzzleSolver {
             //add neighbours
             List<State> neighbours = state.getPossibleNextStates();
             for (State neighbour : neighbours) {
-                if (!frontier.contains(neighbour) && !explored.contains(neighbour)) {
+                if (!map.containsKey(neighbour)) {
                     frontier.add(neighbour);
                     map.put(neighbour, Pair.with(node, currentDepth + 1));
                 }

@@ -60,9 +60,9 @@ public abstract class PuzzleSolver {
         Game.LOGGER.info("Found solution at depth = " + getGoalDepth());
         StringBuilder stringBuilder = new StringBuilder();
         for (State state : solution) {
-            stringBuilder.append(state.getAsString()).append(", ");
+            stringBuilder.append(state.getAsString()).append(" -> ");
         }
-        stringBuilder.delete(stringBuilder.length() - 2, -1);
+        stringBuilder.delete(stringBuilder.length() - 4, stringBuilder.length());
         Game.LOGGER.info("Goal path: " + stringBuilder);
     }
 
