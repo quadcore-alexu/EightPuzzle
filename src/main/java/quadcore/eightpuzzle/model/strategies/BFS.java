@@ -1,20 +1,21 @@
 package quadcore.eightpuzzle.model.strategies;
 
 import org.javatuples.Pair;
+import quadcore.eightpuzzle.model.Game;
 import quadcore.eightpuzzle.model.State;
 import quadcore.eightpuzzle.model.datastructures.TreeNode;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 public class BFS extends PuzzleSolver {
-
-    private final Logger logger = Logger.getLogger("BFS");
 
     @Override
     public boolean solve(State initialState) {
         reset();
         if (initialState == null) throw new NullPointerException("Initial state is null");
+        if (!State.isSolvable(initialState)) return false;
+
+        Game.LOGGER.info("Starting " + this.getClass().getSimpleName());
 
         Queue<State> frontier = new LinkedList<>();
         Set<State> explored = new HashSet<>();
@@ -25,31 +26,36 @@ public class BFS extends PuzzleSolver {
         while (!frontier.isEmpty()) {
             State state = frontier.poll();
             explored.add(state);
-            logger.info(() -> "Exploring: " + state.getAsString());
+            int currentDepth = 0;
             TreeNode<State> node = new TreeNode<>(state);
 
             //add to search tree
             if (state == initialState) {
-                map.put(initialState, Pair.with(node, 0));
+                map.put(initialState, Pair.with(node, currentDepth));
                 searchTree = node;
             } else {
                 map.get(state).getValue0().addChild(node);
-                updateMaxDepth(map.get(state).getValue1());
+                currentDepth = map.get(state).getValue1();
+                updateMaxDepth(currentDepth);
             }
+
+            Game.LOGGER.info("Exploring: " + state.getAsString() + " at depth " + currentDepth);
 
             //if goal
             if (state.isGoal()) {
+                goal = node;
+                goalDepth = currentDepth;
                 solution = getSolFromTree(node);
+                logSolution();
                 return true;
             }
 
             //add neighbours
             List<State> neighbours = state.getPossibleNextStates();
-            int depth = map.get(state).getValue1();
             for (State neighbour : neighbours) {
                 if (!frontier.contains(neighbour) && !explored.contains(neighbour)) {
                     frontier.add(neighbour);
-                    map.put(neighbour, Pair.with(node, depth + 1));
+                    map.put(neighbour, Pair.with(node, currentDepth + 1));
                 }
             }
         }

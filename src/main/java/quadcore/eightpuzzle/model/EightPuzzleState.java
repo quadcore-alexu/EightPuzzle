@@ -4,13 +4,12 @@ package quadcore.eightpuzzle.model;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.*;
 
 public class EightPuzzleState implements State {
 
-//    private final BitSet bitSet = new BitSet(36);
     private final String state;
     private final Point zeroPos;
 
@@ -47,7 +46,6 @@ public class EightPuzzleState implements State {
 
     @Override
     public String getAsString() {
-        //todo: implementation
         return state;
     }
 
@@ -55,13 +53,11 @@ public class EightPuzzleState implements State {
     public boolean equals(Object obj) {
         if (obj instanceof EightPuzzleState)
             return state.equals(((EightPuzzleState) obj).state);
-            //return Arrays.equals(this.bitSet.toLongArray(), ((EightPuzzleState) obj).bitSet.toLongArray());
         return false;
     }
 
     public int hashCode() {
         return state.hashCode();
-        //return Arrays.hashCode(bitSet.toLongArray());
     }
 
     @Contract("_, _ -> new")

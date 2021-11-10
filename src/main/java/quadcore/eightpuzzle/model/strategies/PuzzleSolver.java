@@ -1,6 +1,7 @@
 package quadcore.eightpuzzle.model.strategies;
 
 import org.jetbrains.annotations.NotNull;
+import quadcore.eightpuzzle.model.Game;
 import quadcore.eightpuzzle.model.State;
 import quadcore.eightpuzzle.model.datastructures.TreeNode;
 
@@ -10,6 +11,8 @@ import java.util.List;
 public abstract class PuzzleSolver {
 
     protected TreeNode<State> searchTree;
+    protected TreeNode<State> goal;
+    protected int goalDepth = -1;
     protected List<State> solution;
     protected int maxDepth = 0;
 
@@ -25,8 +28,22 @@ public abstract class PuzzleSolver {
         return searchTree;
     }
 
+    public TreeNode<State> getGoal() {
+        if (goal == null) throw new NullPointerException("Please call `solve()` before getting goal.");
+        return goal;
+    }
+
+    public int getGoalDepth() {
+        if (goalDepth == -1) throw new NullPointerException("Please call `solve()` before getting goal depth.");
+        return goalDepth;
+    }
+
     public int getMaxDepth() {
         return maxDepth;
+    }
+
+    protected void updateMaxDepth(int depth) {
+        if (depth > maxDepth) maxDepth = depth;
     }
 
     protected @NotNull List<State> getSolFromTree(TreeNode<State> goal) {
@@ -39,12 +56,20 @@ public abstract class PuzzleSolver {
         return sol;
     }
 
-    protected void updateMaxDepth(int depth) {
-        if (depth > maxDepth) maxDepth = depth;
+    protected void logSolution() {
+        Game.LOGGER.info("Found solution at depth = " + getGoalDepth());
+        StringBuilder stringBuilder = new StringBuilder();
+        for (State state : solution) {
+            stringBuilder.append(state.getAsString()).append(", ");
+        }
+        stringBuilder.delete(stringBuilder.length() - 2, -1);
+        Game.LOGGER.info("Goal path: " + stringBuilder);
     }
 
     protected void reset() {
         searchTree = null;
+        goal = null;
+        goalDepth = -1;
         solution = null;
         maxDepth = 0;
     }
