@@ -13,6 +13,11 @@ public class EightPuzzleState implements State {
     private final String state;
     private final Point zeroPos;
 
+    /**
+     * Creates a valid eight puzzle state from the given state representation.
+     *
+     * @param stateRepresentation the string representation of the state.
+     */
     public EightPuzzleState(String stateRepresentation) {
         if (!State.isValid(stateRepresentation)) throw new IllegalArgumentException("Initial state is inconsistent");
         state = stateRepresentation;
@@ -20,11 +25,17 @@ public class EightPuzzleState implements State {
         zeroPos = new Point(index % 3, index / 3);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isGoal() {
         return getAsString().equals("012345678");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<State> getPossibleNextStates() {
         List<State> nextStates = new ArrayList<>(4);
@@ -44,6 +55,9 @@ public class EightPuzzleState implements State {
         return nextStates;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getAsString() {
         return state;
@@ -56,6 +70,7 @@ public class EightPuzzleState implements State {
         return false;
     }
 
+    @Override
     public int hashCode() {
         return state.hashCode();
     }

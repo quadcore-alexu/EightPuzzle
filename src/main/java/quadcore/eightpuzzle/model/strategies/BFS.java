@@ -9,10 +9,12 @@ import java.util.*;
 
 public class BFS extends PuzzleSolver {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean solve(State initialState) {
         reset();
-        if (initialState == null) throw new NullPointerException("Initial state is null");
         if (!State.isSolvable(initialState)) return false;
 
         Game.LOGGER.info("Starting " + this.getClass().getSimpleName());
@@ -44,7 +46,7 @@ public class BFS extends PuzzleSolver {
                 goal = node;
                 goalDepth = currentDepth;
                 solution = getSolFromTree(node);
-                logSolution();
+                logSolution(solution);
                 return true;
             }
 
