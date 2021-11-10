@@ -1,5 +1,7 @@
 package quadcore.eightpuzzle.model;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import quadcore.eightpuzzle.model.heuristics.EuclideanHeuristic;
 import quadcore.eightpuzzle.model.heuristics.ManhattanHeuristic;
 import quadcore.eightpuzzle.model.strategies.AStar;
@@ -18,7 +20,14 @@ public class PuzzleSolverFactory {
         ASTAR
     }
 
-    public static PuzzleSolver createPuzzleSolver(String type) {
+    /**
+     * Creates a PuzzleSolver instance based on the string passed.
+     *
+     * @param type the string specifying the type of PuzzleSolver to create.
+     * @return a new PuzzleSolver instnce.
+     */
+    @Contract("_ -> new")
+    public static @NotNull PuzzleSolver createPuzzleSolver(String type) {
         Strategy strategy = getType(type);
         switch (strategy) {
             case BFS:
