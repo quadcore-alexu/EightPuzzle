@@ -1,17 +1,16 @@
 package quadcore.eightpuzzle.model.strategies;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import quadcore.eightpuzzle.model.EightPuzzleState;
 import quadcore.eightpuzzle.model.State;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DFSTest {
 
-    @Disabled("takes too long")
     @Test
     void solve() {
         PuzzleSolver puzzleSolver = new DFS();

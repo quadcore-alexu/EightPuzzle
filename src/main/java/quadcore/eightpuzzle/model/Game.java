@@ -1,11 +1,15 @@
 package quadcore.eightpuzzle.model;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import quadcore.eightpuzzle.model.datastructures.TreeNode;
 import quadcore.eightpuzzle.model.strategies.PuzzleSolver;
 
 import java.util.List;
 
 public class Game {
+
+    public static final Logger LOGGER = LogManager.getLogger(Game.class.getName());
 
     //BFS is chosen as default because branching factor for eight puzzle game is low
     private PuzzleSolver puzzleSolver = PuzzleSolverFactory.createPuzzleSolver("BFS");
@@ -19,7 +23,7 @@ public class Game {
      * @param strategy the strategy to be used in solving the game.
      */
     public void setPuzzleSolver(String strategy) {
-        this.puzzleSolver = PuzzleSolverFactory.createPuzzleSolver(strategy);
+        puzzleSolver = PuzzleSolverFactory.createPuzzleSolver(strategy);
     }
 
     /**
@@ -45,12 +49,47 @@ public class Game {
 
     /**
      * Gets the search tree used by the pre-specified strategy.
+     * This should be called after {@code `solve()`}.
      *
      * @return the root of the tree as a tree node.
-     * This should be called after {@code `solve()`}.
      */
     public TreeNode<State> getSearchTree() {
         return puzzleSolver.getSearchTree();
+    }
+
+    /**
+     * Gets the goal tree node from the search tree.
+     * This should be called after {@code `solve()`}.
+     *
+     * @return the goal tree node.
+     */
+    public TreeNode<State> getGoal() {
+        return puzzleSolver.getGoal();
+    }
+
+    /**
+     * Gets the maximum depth reached by the used puzzle solver strategy.
+     *
+     * @return the maximum depth of the search tree.
+     */
+    public int getMaxDepth() {
+        return puzzleSolver.getMaxDepth();
+    }
+
+    /**
+     * Gets the depth at which the goal was found.
+     *
+     * @return the depth of the goal.
+     */
+    public int getGoalDepth() {
+        return puzzleSolver.getGoalDepth();
+    }
+
+    /**
+     * @return the number of nodes expanded by the puzzle solver while doing the search.
+     */
+    public int getNumberOfNodesExpanded() {
+        return puzzleSolver.getNumberOfNodesExpanded();
     }
 
 }
