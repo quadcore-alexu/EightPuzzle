@@ -14,7 +14,8 @@ public abstract class PuzzleSolver {
     protected TreeNode<State> goal;
     protected int goalDepth = -1;
     protected List<State> solution;
-    protected int maxDepth = 0;
+    protected int maxDepth = -1;
+    protected int numberOfNodesExpanded = 0;
 
     /**
      * Solve the eight puzzle using this strategy and the given initial state.
@@ -70,7 +71,15 @@ public abstract class PuzzleSolver {
      * @return the maximum depth of the search tree.
      */
     public int getMaxDepth() {
+        if (maxDepth == -1) throw new NullPointerException("Please call `solve()` before getting maximum depth.");
         return maxDepth;
+    }
+
+    /**
+     * @return the number of nodes expanded while doing the search.
+     */
+    public int getNumberOfNodesExpanded() {
+        return numberOfNodesExpanded;
     }
 
     /**
@@ -121,12 +130,14 @@ public abstract class PuzzleSolver {
      * - goalDepth<br/>
      * - solution<br/>
      * - maxDepth<br/>
+     * - numberOfNodesExpanded<br/>
      */
     protected void reset() {
         searchTree = null;
         goal = null;
         goalDepth = -1;
         solution = null;
-        maxDepth = 0;
+        maxDepth = -1;
+        numberOfNodesExpanded = 0;
     }
 }

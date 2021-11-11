@@ -17,25 +17,12 @@ public interface State {
     }
 
     /**
-     * Checks if the passed state can be solved.
+     * Checks if the state can be solved.
      * This is achieved by counting the number of inversions in the string representation of the state.
      *
-     * @param state to be tested if solvable.
-     * @return true if the passed state can be solved, false otherwise.
+     * @return true if the state can be solved, false otherwise.
      */
-    static boolean isSolvable(State state) {
-        if (state == null) throw new NullPointerException("Initial state is null");
-        String stateStr = state.getAsString();
-        int invCount = 0;
-        for (int i = 0; i < 9; i++) {
-            for (int j = i + 1; j < 9; j++) {
-                int c1 = Character.getNumericValue(stateStr.charAt(i));
-                int c2 = Character.getNumericValue(stateStr.charAt(j));
-                if (c1 != 0 && c2 != 0 && c1 > c2) invCount++;
-            }
-        }
-        return invCount % 2 == 0;
-    }
+    boolean isSolvable();
 
     /**
      * Checks whether this state is a goal.

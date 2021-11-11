@@ -23,8 +23,8 @@ class EightPuzzleStateTest {
 
     @Test
     void isSolvableTest() {
-        assertFalse(State.isSolvable(new EightPuzzleState("812043765")));
-        assertTrue(State.isSolvable(new EightPuzzleState("087654321")));
+        assertFalse(new EightPuzzleState("812043765").isSolvable());
+        assertTrue(new EightPuzzleState("087654321").isSolvable());
     }
 
     @Test
