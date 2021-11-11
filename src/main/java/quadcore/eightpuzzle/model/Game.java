@@ -23,7 +23,7 @@ public class Game {
      * @param strategy the strategy to be used in solving the game.
      */
     public void setPuzzleSolver(String strategy) {
-        this.puzzleSolver = PuzzleSolverFactory.createPuzzleSolver(strategy);
+        puzzleSolver = PuzzleSolverFactory.createPuzzleSolver(strategy);
     }
 
     /**
@@ -83,6 +83,13 @@ public class Game {
      */
     public int getGoalDepth() {
         return puzzleSolver.getGoalDepth();
+    }
+
+    /**
+     * @return the number of nodes expanded by the puzzle solver while doing the search.
+     */
+    public int getNumberOfNodesExpanded() {
+        return puzzleSolver.getNumberOfNodesExpanded();
     }
 
 }
