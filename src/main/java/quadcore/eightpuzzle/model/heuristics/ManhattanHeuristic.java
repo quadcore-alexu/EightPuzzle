@@ -1,4 +1,5 @@
 package quadcore.eightpuzzle.model.heuristics;
+
 import quadcore.eightpuzzle.model.State;
 
 import java.awt.*;
@@ -16,8 +17,6 @@ public class ManhattanHeuristic implements ToDoubleFunction<State> {
         return instance;
     }
 
-
-
     private Point[] getPoints(char[] state) {
         Point[] stateCoordinates = new Point[9];
         for (int i = 0; i < 9; i++) {
@@ -29,8 +28,6 @@ public class ManhattanHeuristic implements ToDoubleFunction<State> {
     }
 
 
-
-
     @Override
     public double applyAsDouble(State state) {
         String strState = state.getAsString();
@@ -38,14 +35,16 @@ public class ManhattanHeuristic implements ToDoubleFunction<State> {
         Point[] stateCoordinates = getPoints(stateArray);
         Point[] goalCoordinates = getPoints(new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8'});
         double manhattan = 0.0;
+        double[] heuristic = new double[9];
         for (int i = 0; i < 9; i++) {
             int diffX = Math.abs(stateCoordinates[i].x - goalCoordinates[i].x);
             int diffY = Math.abs(stateCoordinates[i].y - goalCoordinates[i].y);
-            int distance = diffX + diffY;
-            manhattan += distance;
+            heuristic[Character.getNumericValue(stateArray[i])] = (double) diffX + (double) diffY;
+            manhattan += heuristic[Character.getNumericValue(stateArray[i])];
         }
-        return manhattan;
+        return manhattan - heuristic[0];
     }
+
 
 }
 
