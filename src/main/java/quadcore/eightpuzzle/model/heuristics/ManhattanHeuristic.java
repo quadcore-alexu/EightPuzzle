@@ -16,8 +16,6 @@ public class ManhattanHeuristic implements ToDoubleFunction<State> {
         return instance;
     }
 
-
-
     private Point[] getPoints(char[] state) {
         Point[] stateCoordinates = new Point[9];
         for (int i = 0; i < 9; i++) {
@@ -47,7 +45,6 @@ public class ManhattanHeuristic implements ToDoubleFunction<State> {
         }
         return manhattan - heuristic[0];
     }
-
 
 
 }
