@@ -1,6 +1,5 @@
 package quadcore.eightpuzzle.model.strategies;
 
-import org.javatuples.Pair;
 import org.junit.jupiter.api.Test;
 import quadcore.eightpuzzle.model.EightPuzzleState;
 import quadcore.eightpuzzle.model.Game;

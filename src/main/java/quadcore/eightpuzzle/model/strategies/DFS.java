@@ -39,7 +39,7 @@ public class DFS extends PuzzleSolver {
                 updateMaxDepth(currentDepth);
             }
 
-            Game.LOGGER.info("Exploring: " + state.getAsString() + " at depth " + currentDepth);
+            Game.LOGGER.debug("Exploring: " + state.getAsString() + " at depth " + currentDepth);
 
             //if goal
             if (state.isGoal()) {

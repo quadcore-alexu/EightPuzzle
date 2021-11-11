@@ -1,16 +1,16 @@
 package quadcore.eightpuzzle.model.strategies;
 
 import org.javatuples.Pair;
+import quadcore.eightpuzzle.model.Game;
 import quadcore.eightpuzzle.model.State;
 import quadcore.eightpuzzle.model.datastructures.TreeNode;
 
 import java.util.*;
-
 import java.util.function.ToDoubleFunction;
 
 public class AStar extends PuzzleSolver{
 
-    private ToDoubleFunction<State> heuristic;
+    private final ToDoubleFunction<State> heuristic;
 
     public AStar(ToDoubleFunction<State> heuristic) {
         this.heuristic = heuristic;
@@ -21,11 +21,13 @@ public class AStar extends PuzzleSolver{
         reset();
         if (!initialState.isSolvable()) return false;
 
+        Game.LOGGER.info("Starting " + this.getClass().getSimpleName() + " with " + heuristic.getClass().getSimpleName());
+
         Map<State, Pair<TreeNode<State>, Integer>> map = new HashMap<>();
 
         PriorityQueue<Pair<State, Double>> frontier = new PriorityQueue<>((o1, o2) -> {
-            double cost1 =o1.getValue1();
-            double cost2 =o2.getValue1();
+            double cost1 = o1.getValue1();
+            double cost2 = o2.getValue1();
             if (cost1 > cost2)
                 return 1;
             else if (cost1 < cost2)
@@ -47,12 +49,14 @@ public class AStar extends PuzzleSolver{
             if (state == initialState) {
                 map.put(initialState, Pair.with(node, currentDepth));
                 searchTree = node;
-            }
-            else {
+            } else {
                 map.get(state).getValue0().addChild(node);
                 currentDepth = map.get(state).getValue1();
                 updateMaxDepth(currentDepth);
             }
+
+            Game.LOGGER.debug("Exploring: " + state.getAsString() + " at depth " + currentDepth);
+
             if (state.isGoal()) {
                 goal = node;
                 goalDepth = currentDepth;
@@ -60,8 +64,8 @@ public class AStar extends PuzzleSolver{
                 logSolution(solution);
                 return true;
             }
-            List <State> neighbours = state.getPossibleNextStates();
-            for (State neighbour :neighbours) {
+            List<State> neighbours = state.getPossibleNextStates();
+            for (State neighbour : neighbours) {
                 if (!map.containsKey(neighbour)){
                     map.put(neighbour, Pair.with(node, currentDepth+1));
                     frontier.add(Pair.with(neighbour, heuristic.applyAsDouble(neighbour)+ currentDepth+1));
