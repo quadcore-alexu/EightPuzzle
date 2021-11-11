@@ -13,12 +13,17 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import quadcore.eightpuzzle.model.Game;
+import quadcore.eightpuzzle.model.State;
+import quadcore.eightpuzzle.model.datastructures.TreeNode;
 
 import java.io.IOException;
 import java.net.URL;
@@ -35,14 +40,17 @@ public class EightPuzzleController implements Initializable {
     private Map<String, String> initialBoard;
     private Map<Integer, String> orderedTiles;
     private Game game;
-    private final String tileStyle = "-fx-font: 30px \"Sitka Banner\"; -fx-background-color:  #ffdbc5; -fx-border-color:  #b01c33; -fx-border-width: 2; -fx-padding: 2 ;-fx-text-alignment: center";
+    private TreeNode root;
+    private final String tileStyle = "-fx-font: 30px \"Sitka Banner\"; -fx-background-color: #ff347f  ; -fx-border-color: #e0ffcd; -fx-border-width: 2; -fx-padding: 2 ;-fx-text-alignment: center";
 
+    @FXML
+    private VBox vBox;
     @FXML
     private Pane boardPane;
     @FXML
-    private GridPane gridPane;
-    @FXML
     private Label errorLabel;
+    @FXML
+    private Label counter;
     @FXML
     private Button solve;
     @FXML
@@ -83,6 +91,7 @@ public class EightPuzzleController implements Initializable {
         if (statesManipulator.hasNext()) {
             int[] move = statesManipulator.nextMove();
             moveTile(move[0], move[1], move[2]);
+            counter.setText(String.valueOf(Integer.valueOf(counter.getText()) - 1));
         } else
             lock = false;
     }
@@ -90,6 +99,9 @@ public class EightPuzzleController implements Initializable {
     @FXML
     protected void setInitialState(Event event) {
         TextField tile = (TextField) event.getSource();
+        if (tile.getText().equals(null)) {
+            issueError("INVALID STATE");
+        }
         initialBoard.put(tile.getId(), tile.getText());
         System.out.printf((String) initialBoard.get(tile.getId()));
     }
@@ -97,11 +109,12 @@ public class EightPuzzleController implements Initializable {
     @FXML
     protected void onStrategySelected() {
         strategy = (String) strategies.getValue();
+
         if (strategy.equals("A*"))
             heuristics.setVisible(true);
         else
             heuristics.setVisible(false);
-        System.out.printf("Strategy");
+
     }
 
     @FXML
@@ -120,6 +133,7 @@ public class EightPuzzleController implements Initializable {
             if (!statesManipulator.hasNext()) colorBoard(false);
             int[] move = statesManipulator.previousMove();
             moveTile(move[0], move[1], move[2]);
+            counter.setText(String.valueOf(Integer.valueOf(counter.getText()) + 1));
         } else
             lock = false;
 
@@ -136,6 +150,8 @@ public class EightPuzzleController implements Initializable {
         TreeController controller = fxmlLoader.getController();
         stage.show();
         controller.setStage(stage);
+        controller.initializeRoot(root);
+        // controller.root = root;
     }
 
     @Override
@@ -147,8 +163,7 @@ public class EightPuzzleController implements Initializable {
 
         //TODO: replace the passed array of strings with path solution array
         setStyles();
-        statesManipulator = new StatesManipulator(new String[]{"125340678", "120345678", "102345678", "012345678"});
-        boardPane.getChildren().add(createBoard("125340678"));
+
         strategies.getItems().clear();
         strategies.getItems().addAll("BFS", "DFS", "A*");
         heuristics.getItems().clear();
@@ -156,6 +171,7 @@ public class EightPuzzleController implements Initializable {
         heuristics.setVisible(false);
         initialBoard = new HashMap<>();
         errorLabel.setVisible(false);
+        boardPane.setVisible(false);
         initializeOrderedTiles();
         game = new Game();
 
@@ -262,8 +278,8 @@ public class EightPuzzleController implements Initializable {
         tileSeven.setStyle(tileStyle);
         tileEight.setStyle(tileStyle);
         tileNine.setStyle(tileStyle);
-        heuristics.setStyle("-fx-font: 20px \"Sitka Banner\"; -fx-background-color:  #ffdbc5; -fx-border-color: #ef4339;-fx-border-width: 5");
-        strategies.setStyle("-fx-font: 20px \"Sitka Banner\"; -fx-background-color:  #ffdbc5; -jfx-unfocus-color: white;-fx-border-color: #ef4339;-fx-border-width: 3");
+        heuristics.setStyle("-fx-font: 20px \"Sitka Banner\"; ");
+        strategies.setStyle("-fx-font: 20px \"Sitka Banner\"; -fx-background-color:  transparent; -jfx-unfocus-color: white;-fx-background-color: #ffdbc5;-fx-text-alignment: center; -fx-border-radius: 3");
         tileOne.setAlignment(Pos.CENTER);
         tileTwo.setAlignment(Pos.CENTER);
         tileThree.setAlignment(Pos.CENTER);
@@ -273,7 +289,12 @@ public class EightPuzzleController implements Initializable {
         tileSeven.setAlignment(Pos.CENTER);
         tileEight.setAlignment(Pos.CENTER);
         tileNine.setAlignment(Pos.CENTER);
-        solve.setStyle("-fx-font: 20px \"Sitka Banner\"; -fx-background-color:  #ffdbc5;");
+        counter.setStyle("-fx-background-color:  #ffdbc5; -fx-background-radius: 30; -fx-text-alignment: center; -fx-font: 20px \"Sitka Banner\"  ");
+        counter.setAlignment(Pos.CENTER);
+
+        vBox.setStyle("-fx-background-color:linear-gradient(to right,rgb(161, 255, 206) 0%, rgb(250, 255, 209) 90%)");
+        solve.setStyle("-fx-font: 20px \"Sitka Banner\"; -fx-background-color:  #ffdbc5; -fx-background-radius: 40");
+        //radial-gradient(circle at 7.5% 24%, rgb(237, 161, 193) 0%, rgb(250, 178, 172) 25.5%, rgb(190, 228, 210) 62.3%, rgb(215, 248, 247) 93.8%)
 
     }
 
@@ -307,7 +328,7 @@ public class EightPuzzleController implements Initializable {
     }
 
     private boolean isValidTileValue(String value) {
-        if (value.length() > 1) return false;
+        if (value.length() == 0 || value.equals(null) || value.length() > 1) return false;
         if (Character.isDigit(value.charAt(0))) {
             return Integer.parseInt(value) < 9 && Integer.parseInt(value) >= 0 ? true : false;
         }
@@ -321,17 +342,24 @@ public class EightPuzzleController implements Initializable {
     @FXML
     private boolean isValidInitialState() {
         System.out.println(initialBoard.size());
-        if (initialBoard.size() < 9) issueError();
+        if (initialBoard.size() < 9) {
+            issueError("INVALID STATE");
+            return false;
+        }
         String value = "";
         for (int i = 1; i <= 9; i++) {
-
+            if (initialBoard.get(orderedTiles.get(Integer.valueOf(i))).equals(null)) {
+                issueError("INVALID STATE");
+                return false;
+            }
             value = initialBoard.get(orderedTiles.get(Integer.valueOf(i)));
             if (isValidTileValue(value) && !isDuplicateValue(value)) {
                 initialState += value;
             } else {
                 System.out.println(value);
-                issueError();
+                issueError("INVALID STATE");
                 resetInitialState();
+
                 return false;
 
             }
@@ -346,9 +374,23 @@ public class EightPuzzleController implements Initializable {
 
     }
 
-    private void issueError() {
-        errorLabel.setText("INVALID STATE!");
+    private void clearText() {
+        tileOne.clear();
+        ;
+        tileTwo.clear();
+        tileThree.clear();
+        tileFour.clear();
+        tileFive.clear();
+        tileSix.clear();
+        tileSeven.clear();
+        tileEight.clear();
+        tileNine.clear();
+    }
+
+    public void issueError(String message) {
+        errorLabel.setText(message);
         errorLabel.setVisible(true);
+        clearText();
         PauseTransition visiblePause = new PauseTransition(
                 Duration.seconds(3)
         );
@@ -358,9 +400,37 @@ public class EightPuzzleController implements Initializable {
         visiblePause.play();
     }
 
+    private boolean isValidStrategy() {
+        if (strategy == null) {
+            issueError("SELECT A STRATEGY");
+            return false;
+        }
+        return true;
+    }
+
     private void solve() {
-        game.setPuzzleSolver(strategy);
-        game.solve(initialState);
+        Boolean isSolvable;
+        if (isValidStrategy()) {
+            boardPane.getChildren().add(createBoard(initialState));
+            boardPane.setVisible(true);
+            game.setPuzzleSolver(strategy);
+            isSolvable = game.solve(initialState);
+            if (!isSolvable) {
+                issueError("UNSOLVABLE INITIAL STATE");
+                return;
+            }
+
+            String[] states;
+            states = game.getSolution().stream().map(state -> state.getAsString()).toArray(String[]::new);
+            counter.setText(String.valueOf(states.length - 1));
+            System.out.println("STATES SIZE  " + states.length);
+            statesManipulator = new StatesManipulator(states);
+            root = game.getSearchTree();
+            for (String s : states) {
+                System.out.println(s);
+            }
+
+        }
     }
 
 

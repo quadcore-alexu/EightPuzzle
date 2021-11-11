@@ -12,6 +12,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import quadcore.eightpuzzle.model.State;
+import quadcore.eightpuzzle.model.datastructures.TreeNode;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,6 +22,7 @@ public class TreeController implements Initializable {
     private int[] levels;
     private int pivotalX;
     private AnchorPane treePane;
+    protected TreeNode<State> root;
 
     @FXML
     private ScrollPane scrollPane;
@@ -31,7 +34,8 @@ public class TreeController implements Initializable {
         levels = new int[8];
         treePane = new AnchorPane();
         // TODO: replace buildDummyTree call with a call on solution model
-        buildSearchTree(0, 0, buildDummyTree(), 0);
+        System.out.println("ROOT INITIALIZE " + root);
+         //buildSearchTree(0, 0,root, 0);
         scrollPane.setContent(treePane);
         scrollPane.setPannable(true);
     }
@@ -45,6 +49,12 @@ public class TreeController implements Initializable {
         scrollPane.setPrefWidth(stage.getWidth()-50);
     }
 
+    public void initializeRoot(TreeNode<State> root)
+    {
+        this.root = root;
+        buildSearchTree(0,0,root,0);
+    }
+
     /**
      * Traverses the given tree and renders each of its states
      * Drawing lines between parent node and its children
@@ -53,7 +63,8 @@ public class TreeController implements Initializable {
      * @param node current node to be rendered
      * @param level node level in tree
      */
-    public void buildSearchTree(int parentX,int parentY,DummyNode node, int level){
+    public void buildSearchTree(int parentX, int parentY, TreeNode<State> node, int level){
+
         double sideLength = UIConstants.TREE_TILE_SIDE_LENGTH;
         int nodeY = parentY + (int)sideLength*3*3/2;
         int nodeX = pivotalX + (int)(sideLength*3+20) * levels[level];
@@ -61,9 +72,10 @@ public class TreeController implements Initializable {
         Line line = new Line(nodeX, nodeY-sideLength*3/2, parentX, parentY+sideLength*3/2);
         if (level > 0)
             treePane.getChildren().add(line);
-        drawState(nodeX, nodeY, node.state);
-        for (int i = 0; i < node.children.size(); i++) {
-            buildSearchTree(nodeX, nodeY, node.children.get(i), level+1);
+        System.out.println("NODE VALUE IS " + node.getValue().getAsString());
+        drawState(nodeX, nodeY, node.getValue().getAsString());
+        for (int i = 0; i < node.getChildren().size(); i++) {
+            buildSearchTree(nodeX, nodeY, node.getChildren().get(i), level+1);
         }
     }
 
