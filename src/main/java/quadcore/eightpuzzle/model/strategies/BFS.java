@@ -15,7 +15,7 @@ public class BFS extends PuzzleSolver {
     @Override
     public boolean solve(State initialState) {
         reset();
-        if (!State.isSolvable(initialState)) return false;
+        if (!initialState.isSolvable()) return false;
 
         Game.LOGGER.info("Starting " + this.getClass().getSimpleName());
 
@@ -26,10 +26,10 @@ public class BFS extends PuzzleSolver {
 
         while (!frontier.isEmpty()) {
             State state = frontier.poll();
+            numberOfNodesExpanded++;
             int currentDepth = 0;
             TreeNode<State> node = new TreeNode<>(state);
 
-            //add to search tree
             if (state == initialState) {
                 map.put(initialState, Pair.with(node, currentDepth));
                 searchTree = node;
