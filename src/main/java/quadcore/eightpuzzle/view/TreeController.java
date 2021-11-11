@@ -12,8 +12,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import quadcore.eightpuzzle.model.State;
 import quadcore.eightpuzzle.model.datastructures.TreeNode;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Stack;
@@ -22,6 +22,7 @@ public class TreeController implements Initializable {
     private int[] levels;
     private int pivotalX;
     private AnchorPane treePane;
+    protected TreeNode<State> root;
 
     @FXML
     private ScrollPane scrollPane;
@@ -32,8 +33,7 @@ public class TreeController implements Initializable {
         // TODO: 8 to be replaced by tree max depth (from models)
         levels = new int[8];
         treePane = new AnchorPane();
-        // TODO: replace buildDummyTree call with a call on solution model
-        buildSearchTree(buildDummyTree());
+        System.out.println("ROOT INITIALIZE " + root);
         scrollPane.setContent(treePane);
         scrollPane.setPannable(true);
     }
@@ -47,11 +47,18 @@ public class TreeController implements Initializable {
         scrollPane.setPrefWidth(stage.getWidth()-50);
     }
 
+    public void initializeRoot(TreeNode<State> root)
+    {
+        this.root = root;
+        buildSearchTree(0,0,root,0);
+    }
+
     /**
      * Traverses the given tree and renders each of its states
      * Drawing lines between parent node and its children
      * @param root current node to be rendered
      */
+
     public void buildSearchTree(TreeNode<String> root){
         double sideLength = UIConstants.TREE_TILE_SIDE_LENGTH;
         Stack<GraphicTreeNode> stack = new Stack<>();
