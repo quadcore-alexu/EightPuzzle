@@ -31,7 +31,7 @@ public class TreeController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         pivotalX = 2*(int)UIConstants.TREE_TILE_SIDE_LENGTH;
         // TODO: 8 to be replaced by tree max depth (from models)
-        levels = new int[8];
+
         treePane = new AnchorPane();
         System.out.println("ROOT INITIALIZE " + root);
         scrollPane.setContent(treePane);
@@ -47,10 +47,11 @@ public class TreeController implements Initializable {
         scrollPane.setPrefWidth(stage.getWidth()-50);
     }
 
-    public void initializeRoot(TreeNode<State> root)
+    public void initializeRoot(TreeNode<State> root,int nodesExpanded)
     {
         this.root = root;
-        buildSearchTree(0,0,root,0);
+        this.levels = new int[30];
+       buildSearchTree(root);
     }
 
     /**
@@ -59,7 +60,7 @@ public class TreeController implements Initializable {
      * @param root current node to be rendered
      */
 
-    public void buildSearchTree(TreeNode<String> root){
+    public void buildSearchTree(TreeNode<State> root){
         double sideLength = UIConstants.TREE_TILE_SIDE_LENGTH;
         Stack<GraphicTreeNode> stack = new Stack<>();
         stack.push(new GraphicTreeNode(pivotalX, 0, root, 0, 0));
@@ -73,7 +74,7 @@ public class TreeController implements Initializable {
                                  node.getParentX(), node.getParentY()+sideLength*3/2);
             if (node.getLevel() > 0)
                 treePane.getChildren().add(line);
-            drawState(nodeX, nodeY, node.getState(), node.isMarked());
+            drawState(nodeX, nodeY, node.getState().getAsString(), node.isMarked());
 
             for (int i = 0; i < node.getChildren().size(); i++) {
                 stack.push(new GraphicTreeNode(nodeX, nodeY, node.getChildren().get(i), node.getLevel()+1, slot));
