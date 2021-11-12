@@ -48,7 +48,7 @@ public class PuzzleSolverFactory {
         type = type.toLowerCase().trim();
         if (type.matches(".*\\bbfs\\b.*")) return Strategy.BFS;
         if (type.matches(".*\\bdfs\\b.*")) return Strategy.DFS;
-        if (type.matches(".*\\b(astar|a star)\\b.*") || type.contains("a*") || type.contains("A*")) return Strategy.ASTAR;
+        if (type.matches(".*\\b(astar|a star)\\b.*") || type.contains("a*")) return Strategy.ASTAR;
         throw new UnsupportedOperationException("This strategy for puzzle solving isn't supported");
     }
 }

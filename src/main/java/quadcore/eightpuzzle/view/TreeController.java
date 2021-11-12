@@ -14,70 +14,71 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import quadcore.eightpuzzle.model.State;
 import quadcore.eightpuzzle.model.datastructures.TreeNode;
+
 import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.Stack;
+import java.util.*;
 
 public class TreeController implements Initializable {
     private int[] levels;
     private int pivotalX;
     private AnchorPane treePane;
     protected TreeNode<State> root;
+    private final int MAX_LEVEL = 10;
 
     @FXML
     private ScrollPane scrollPane;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        pivotalX = 2*(int)UIConstants.TREE_TILE_SIDE_LENGTH;
-        // TODO: 8 to be replaced by tree max depth (from models)
-
+        pivotalX = 2 * (int) UIConstants.TREE_TILE_SIDE_LENGTH;
         treePane = new AnchorPane();
-        System.out.println("ROOT INITIALIZE " + root);
         scrollPane.setContent(treePane);
         scrollPane.setPannable(true);
     }
 
     /**
      * Called after showing stage to adjust scroll pane size
+     *
      * @param stage current stage
      */
     public void setStage(Stage stage) {
-        scrollPane.setPrefHeight(stage.getHeight()-50);
-        scrollPane.setPrefWidth(stage.getWidth()-50);
+        scrollPane.setPrefHeight(stage.getHeight() - 50);
+        scrollPane.setPrefWidth(stage.getWidth() - 50);
     }
 
-    public void initializeRoot(TreeNode<State> root,int nodesExpanded)
-    {
+    public void initializeRoot(TreeNode<State> root, int maxDepth) {
         this.root = root;
-        this.levels = new int[30];
-       buildSearchTree(root);
+        this.levels = new int[maxDepth + 1];
+        buildSearchTree(root);
     }
 
     /**
      * Traverses the given tree and renders each of its states
      * Drawing lines between parent node and its children
+     *
      * @param root current node to be rendered
      */
 
-    public void buildSearchTree(TreeNode<State> root){
+    public void buildSearchTree(TreeNode<State> root) {
         double sideLength = UIConstants.TREE_TILE_SIDE_LENGTH;
-        Stack<GraphicTreeNode> stack = new Stack<>();
-        stack.push(new GraphicTreeNode(pivotalX, 0, root, 0, 0));
-        while (!stack.empty()) {
-            GraphicTreeNode node = stack.pop();
-            int nodeY = node.getParentY() + (int)sideLength*3*3/2;
+        Queue<GraphicTreeNode> queue = new ArrayDeque<>();
+        queue.add(new GraphicTreeNode(pivotalX, 0, root, 0, 0));
+        while (!queue.isEmpty()) {
+            GraphicTreeNode node = queue.remove();
+            int nodeY = node.getParentY() + (int) sideLength * 3 * 3 / 2;
             int slot = Math.max(node.getParentSlot(), levels[node.getLevel()]);
-            int nodeX = pivotalX + (int)(sideLength*3+20) * slot;
-            levels[node.getLevel()] = slot+1;
-            Line line = new Line(nodeX, nodeY-sideLength*3/2,
-                                 node.getParentX(), node.getParentY()+sideLength*3/2);
+            int nodeX = pivotalX + (int) (sideLength * 3 + 20) * slot;
+            levels[node.getLevel()] = slot + 1;
+            Line line = new Line(nodeX, nodeY - sideLength * 3 / 2,
+                    node.getParentX(), node.getParentY() + sideLength * 3 / 2);
             if (node.getLevel() > 0)
                 treePane.getChildren().add(line);
             drawState(nodeX, nodeY, node.getState().getAsString(), node.isMarked());
 
             for (int i = 0; i < node.getChildren().size(); i++) {
-                stack.push(new GraphicTreeNode(nodeX, nodeY, node.getChildren().get(i), node.getLevel()+1, slot));
+                TreeNode next = node.getChildren().get(i);
+                if (node.getLevel() <= MAX_LEVEL)
+                    queue.add(new GraphicTreeNode(nodeX, nodeY, next, node.getLevel() + 1, slot));
             }
         }
     }
@@ -105,9 +106,10 @@ public class TreeController implements Initializable {
      * Renders the board for a certain state
      * Computes its coordinates in tree view
      * And add it to treePane to be shown
-     * @param nodalX board center X coordinate
-     * @param nodalY board center Y coordinate
-     * @param state board state
+     *
+     * @param nodalX   board center X coordinate
+     * @param nodalY   board center Y coordinate
+     * @param state    board state
      * @param isMarked whether the node on goal path
      */
     private void drawState(double nodalX, double nodalY, String state, boolean isMarked) {
@@ -119,7 +121,7 @@ public class TreeController implements Initializable {
             for (int j = 0; j < 3; j++) {
                 Rectangle tile = new Rectangle(sideLength, sideLength);
                 tile.setFill(color);
-                Text text = new Text(state.charAt(i*3+j)+"");
+                Text text = new Text(state.charAt(i * 3 + j) + "");
                 text.setFill(Color.WHITESMOKE);
                 text.setFont(Font.font("Sitka Banner", 12));
                 if (text.getText().equals("0"))
@@ -128,9 +130,9 @@ public class TreeController implements Initializable {
                 gameBoard.add(pane, j, i);
             }
         }
-        gameBoard.setLayoutX(nodalX-sideLength*3/2);
-        gameBoard.setLayoutY(nodalY-sideLength*3/2);
+        gameBoard.setLayoutX(nodalX - sideLength * 3 / 2);
+        gameBoard.setLayoutY(nodalY - sideLength * 3 / 2);
         treePane.getChildren().add(gameBoard);
-        treePane.setPrefHeight(Math.max(treePane.getHeight(), nodalY+sideLength*3/2));
+        treePane.setPrefHeight(Math.max(treePane.getHeight(), nodalY + sideLength * 3 / 2));
     }
 }
