@@ -116,7 +116,7 @@ public class EightPuzzleController implements Initializable {
 
     @FXML
     protected void onStrategySelected() {
-
+        reset();
         strategy = strategies.getValue();
         if (strategy.equals(null)) issueError("CHOOSE A STRATEGY");
 
@@ -143,13 +143,11 @@ public class EightPuzzleController implements Initializable {
         clearText();
         initialBoard = new HashMap<>();
         initialState = "";
-        strategy = "";
-        heuristic = "";
-        counter.setText("");
-        expandedNodes.setText("");
-        maxDepth.setText("");
-        goalDepth.setText("");
-
+        counter.setText("0");
+        expandedNodes.setText("0");
+        maxDepth.setText("0");
+        goalDepth.setText("0");
+        time.setText("0");
     }
 
     @FXML
