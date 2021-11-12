@@ -80,6 +80,12 @@
          <Label fx:id="expandedNodes" layoutX="187.0" layoutY="217.0" />
          <Label fx:id="maxDepth" layoutX="187.0" layoutY="166.0" prefHeight="17.0" prefWidth="70.0" style="-fx-background-color: #ffdbc5;" />
          <Label fx:id="expandedNodes" layoutX="187.0" layoutY="216.0" prefHeight="17.0" prefWidth="70.0" style="-fx-background-color: #ffdbc5;" />
+         <Label layoutX="23.0" layoutY="264.0" prefHeight="17.0" prefWidth="114.0" text="Running time">
+            <font>
+               <Font size="18.0" />
+            </font>
+         </Label>
+         <Label fx:id="time" layoutX="187.0" layoutY="264.0" prefHeight="17.0" prefWidth="70.0" style="-fx-background-color: #ffdbc5;" />
       </children>
    </Pane>
 

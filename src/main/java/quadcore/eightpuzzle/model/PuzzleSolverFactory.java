@@ -36,7 +36,7 @@ public class PuzzleSolverFactory {
                 return new DFS();
             case ASTAR:
                 if (type.toLowerCase().contains("manhattan")) return new AStar(ManhattanHeuristic.getInstance());
-                if (type.toLowerCase().contains("euclid")) return new AStar(EuclideanHeuristic.getInstance());
+                if (type.toLowerCase().contains("euclidean")) return new AStar(EuclideanHeuristic.getInstance());
                 throw new UnsupportedOperationException("This A* heuristic isn't supported");
             default:
                 throw new UnsupportedOperationException("This strategy for puzzle solving isn't supported");

@@ -63,6 +63,8 @@ public class EightPuzzleController implements Initializable {
     @FXML
     private Label expandedNodes;
 
+    @FXML
+    private Label time;
 
     @FXML
     private ComboBox strategies;
@@ -468,7 +470,10 @@ public class EightPuzzleController implements Initializable {
                 game.setPuzzleSolver(heuristic + " " + strategy);
             else
                 game.setPuzzleSolver(strategy);
+            long start = System.currentTimeMillis();
             isSolvable = game.solve(initialState);
+            long end = System.currentTimeMillis();
+            time.setText(end- start +"ms");
             if (!isSolvable) {
                 issueError("UNSOLVABLE INITIAL STATE");
                 return;
