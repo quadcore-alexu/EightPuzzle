@@ -1,5 +1,6 @@
 package quadcore.eightpuzzle.view;
 
+import quadcore.eightpuzzle.model.State;
 import quadcore.eightpuzzle.model.datastructures.TreeNode;
 
 import java.util.List;
@@ -7,11 +8,11 @@ import java.util.List;
 public class GraphicTreeNode {
     private final int parentX;
     private final int parentY;
-    private final TreeNode<String> node;
+    private final TreeNode<State> node;
     private final int level;
     private int parentSlot;
 
-    public GraphicTreeNode(int parentX, int parentY, TreeNode<String> node, int level, int parentSlot) {
+    public GraphicTreeNode(int parentX, int parentY, TreeNode<State> node, int level, int parentSlot) {
         this.parentX = parentX;
         this.parentY = parentY;
         this.node = node;
@@ -27,7 +28,7 @@ public class GraphicTreeNode {
         return parentY;
     }
 
-    public TreeNode<String> getNode() {
+    public TreeNode<State> getNode() {
         return node;
     }
 
@@ -35,7 +36,7 @@ public class GraphicTreeNode {
         return level;
     }
 
-    public String getState() {
+    public State getState() {
         return node.getValue();
     }
 
@@ -43,7 +44,7 @@ public class GraphicTreeNode {
         return node.isMarked();
     }
 
-    public List<TreeNode<String>> getChildren() {
+    public List<TreeNode<State>> getChildren() {
         return node.getChildren();
     }
 

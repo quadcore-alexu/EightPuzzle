@@ -52,9 +52,9 @@ class BFSTest {
         PuzzleSolver puzzleSolver = PuzzleSolverFactory.createPuzzleSolver("BFS");
         boolean res = puzzleSolver.solve(state);
         assertTrue(res);
-        Game.LOGGER.info("nodes expanded = " + puzzleSolver.getNumberOfNodesExpanded());
-        Game.LOGGER.info("goal cost = " + puzzleSolver.getGoalDepth());
-        Game.LOGGER.info("max depth = " + puzzleSolver.getMaxDepth());
+//        Game.LOGGER.info("nodes expanded = " + puzzleSolver.getNumberOfNodesExpanded());
+//        Game.LOGGER.info("goal cost = " + puzzleSolver.getGoalDepth());
+//        Game.LOGGER.info("max depth = " + puzzleSolver.getMaxDepth());
 
     }
 }

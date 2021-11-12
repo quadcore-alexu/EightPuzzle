@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <VBox fx:id="vBox" alignment="CENTER" prefHeight="710.0" prefWidth="884.0" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="quadcore.eightpuzzle.view.EightPuzzleController">
     <padding>
@@ -26,7 +27,7 @@
           
       </children>
    </Pane>
-   <Pane prefHeight="238.0" prefWidth="782.0">
+   <Pane prefHeight="396.0" prefWidth="844.0">
       <children>
          <GridPane layoutX="651.0" layoutY="3.0" prefHeight="199.0" prefWidth="209.0">
            <columnConstraints>
@@ -52,11 +53,44 @@
                <TextField fx:id="tileNine" onAction="#setInitialState" onKeyReleased="#setInitialState" prefHeight="76.0" prefWidth="82.0" style="-fx-background-color: #ffdbc5;" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             </children>
          </GridPane>
-         <ComboBox fx:id="strategies" layoutX="280.0" layoutY="26.0" onAction="#onStrategySelected" prefHeight="33.0" prefWidth="218.0" promptText="Startegy" style="-fx-border-color: #b01c33; -fx-border-width: 4; -fx-background-radius: 1200; -fx-border-radius: 1000; -fx-background-color: #ffdbc5;" />
+         <ComboBox fx:id="strategies" layoutX="313.0" layoutY="25.0" onAction="#onStrategySelected" prefHeight="33.0" prefWidth="218.0" promptText="Startegy" style="-fx-border-color: #b01c33; -fx-border-width: 4; -fx-background-radius: 1200; -fx-border-radius: 1000; -fx-background-color: #ffdbc5;" />
          <Button fx:id="solve" layoutX="702.0" layoutY="212.0" mnemonicParsing="false" onAction="#isValidInitialState" prefHeight="25.0" prefWidth="86.0" text="Solve" />
-         <Button layoutX="61.0" layoutY="27.0" mnemonicParsing="false" onAction="#showTree" prefHeight="31.0" prefWidth="60.0" style="-fx-background-color: #ffdbc5;" text="Tree" />
-         <Label fx:id="errorLabel" layoutX="280.0" layoutY="145.0" prefHeight="40.0" prefWidth="257.0" style="-fx-background-color: #ffdbc5;" text="Label" />
-         <ComboBox fx:id="heuristics" layoutX="279.0" layoutY="86.0" onAction="#onHeuristicSelected" prefHeight="33.0" prefWidth="272.0" promptText="Heurestic function" style="-fx-background-color: #ffdbc5;" />
+         <Button layoutX="302.0" layoutY="204.0" mnemonicParsing="false" onAction="#showTree" prefHeight="40.0" prefWidth="291.0" style="-fx-background-color: #ff347f;" text="View Search Tree" textFill="WHITE">
+            <font>
+               <Font name="Symbol" size="18.0" />
+            </font></Button>
+         <Label fx:id="errorLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="445.0" layoutY="244.0" prefHeight="40.0" prefWidth="257.0" style="-fx-background-color: #ffdbc5;" text="Label" textFill="#ea1313" />
+         <ComboBox fx:id="heuristics" layoutX="313.0" layoutY="86.0" onAction="#onHeuristicSelected" prefHeight="33.0" prefWidth="272.0" promptText="Heurestic function" style="-fx-background-color: #ffdbc5;" />
+         <Label layoutX="18.0" layoutY="113.0" prefHeight="27.0" prefWidth="95.0" text="Goal depth" textFill="#1b1a1a">
+            <font>
+               <Font size="18.0" />
+            </font>
+         </Label>
+         <Label fx:id="goalDepth" alignment="CENTER" contentDisplay="CENTER" layoutX="187.0" layoutY="118.0" prefHeight="17.0" prefWidth="95.0" style="-fx-background-color: #ffdbc5;" textAlignment="CENTER" />
+         <Label layoutX="23.0" layoutY="161.0" text="Max depth" textFill="#232323">
+            <font>
+               <Font size="18.0" />
+            </font>
+         </Label>
+         <Label layoutX="14.0" layoutY="212.0" text="#expanded nodes" textFill="#363434">
+            <font>
+               <Font size="18.0" />
+            </font>
+         </Label>
+         <Label fx:id="expandedNodes" layoutX="187.0" layoutY="217.0" />
+         <Label fx:id="maxDepth" alignment="CENTER" contentDisplay="CENTER" layoutX="187.0" layoutY="166.0" prefHeight="17.0" prefWidth="95.0" style="-fx-background-color: #ffdbc5;" textAlignment="CENTER" />
+         <Label fx:id="expandedNodes" alignment="CENTER" contentDisplay="CENTER" layoutX="187.0" layoutY="216.0" prefHeight="17.0" prefWidth="95.0" style="-fx-background-color: #ffdbc5;" textAlignment="CENTER" />
+         <Label layoutX="23.0" layoutY="264.0" prefHeight="17.0" prefWidth="114.0" text="Running time">
+            <font>
+               <Font size="18.0" />
+            </font>
+         </Label>
+         <Label fx:id="time" alignment="CENTER" contentDisplay="CENTER" layoutX="187.0" layoutY="264.0" prefHeight="17.0" prefWidth="95.0" style="-fx-background-color: #ffdbc5;" textAlignment="CENTER" />
+         <Button fx:id="reset" layoutX="65.0" layoutY="302.0" mnemonicParsing="false" onAction="#reset" prefHeight="30.0" prefWidth="182.0" style="-fx-background-color: #ff347f;" text="Reset" textFill="WHITE">
+            <font>
+               <Font size="14.0" />
+            </font>
+         </Button>
       </children>
    </Pane>
 
@@ -73,7 +107,7 @@
                <Image url="@next.png" />
             </image>
          </ImageView>
-         <Label fx:id="counter" layoutX="697.0" layoutY="-6.0" prefHeight="58.0" prefWidth="104.0" />
+         <Label fx:id="counter" layoutX="697.0" layoutY="2.0" prefHeight="50.0" prefWidth="104.0" />
       </children>
    </Pane>
 </VBox>
